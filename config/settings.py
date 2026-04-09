@@ -1,3 +1,5 @@
+from pathlib import Path
+import os
 """
 Django settings for config project.
 
@@ -25,11 +27,9 @@ SECRET_KEY = 'django-insecure-+cnokngl@!u&ok@it9+ik&eo@mr$6u3o=q*q+9$a5_0i#!7y(@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = ['perfumefit.onrender.com', 'perfume.fit', 'localhost', '127.0.0.1', '.onrender.com']
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'shopify_auth',
     'recommender',
 ]
 
@@ -116,3 +117,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Shopify App Settings
+SHOPIFY_APP_NAME = 'Perfume Fit AI'
+SHOPIFY_APP_API_KEY = 'dummy_key_for_dev'
+SHOPIFY_APP_API_SECRET = 'dummy_secret_for_dev'
+SHOPIFY_APP_API_SCOPE = ['read_products']
+SHOPIFY_APP_API_VERSION = "2024-04"
+SHOPIFY_APP_DEV_MODE = True  # This is important!
+SHOPIFY_AUTH_BOUNCE_PAGE_URL = '/'
+
+# Authentication
+AUTHENTICATION_BACKENDS = (
+    'shopify_auth.backends.ShopUserBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+LOGIN_REDIRECT_URL = '/'
