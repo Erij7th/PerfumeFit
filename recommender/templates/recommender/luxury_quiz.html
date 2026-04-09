@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Find Your Signature Scent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: light;
+            --gold: #D4AF37;
+            --gold-soft: rgba(212, 175, 55, 0.22);
+            --purple: #9B7BB5;
+            --purple-soft: rgba(155, 123, 181, 0.22);
+            --blush: #E8C4D4;
+            --blush-soft: rgba(232, 196, 212, 0.24);
+            --green-soft: rgba(198, 228, 195, 0.26);
+            --blue-soft: rgba(196, 220, 242, 0.26);
+            --cream: #fffaf2;
+            --white: rgba(255, 255, 255, 0.88);
+            --text: #201914;
+            --muted: #70655c;
+            --line: rgba(149, 130, 111, 0.18);
+            --shadow-lg: 0 28px 72px rgba(36, 24, 14, 0.12);
+            --shadow-md: 0 16px 36px rgba(36, 24, 14, 0.10);
+            --shadow-sm: 0 10px 24px rgba(36, 24, 14, 0.08);
+            --radius-card: 16px;
+            --radius-pill: 999px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Poppins", "Montserrat", sans-serif;
+            color: var(--text);
+            line-height: 1.5;
+            background:
+                radial-gradient(circle at 10% 12%, rgba(212, 175, 55, 0.30), transparent 22%),
+                radial-gradient(circle at 92% 10%, rgba(155, 123, 181, 0.24), transparent 24%),
+                radial-gradient(circle at 82% 86%, rgba(232, 196, 212, 0.28), transparent 22%),
+                radial-gradient(circle at 14% 88%, rgba(196, 220, 242, 0.28), transparent 22%),
+                linear-gradient(180deg, #fffefd 0%, #fff8ef 100%);
+        }
+
+        a { color: inherit; }
+        button, input, textarea { font: inherit; }
+
+        .page {
+            position: relative;
+            padding: 2rem 1.25rem 2.75rem;
+        }
+
+        .page::before,
+        .page::after {
+            content: "";
+            position: fixed;
+            width: 260px;
+            height: 260px;
+            border-radius: 999px;
+            filter: blur(18px);
+            pointer-events: none;
+            opacity: 0.45;
+            z-index: -1;
+        }
+
+        .page::before {
+            top: 8%;
+            left: -80px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.28), transparent 70%);
+        }
+
+        .page::after {
+            right: -90px;
+            bottom: 10%;
+            background: radial-gradient(circle, rgba(155, 123, 181, 0.24), transparent 70%);
+        }
+
+        .hero,
+        .glass,
+        .results-panel {
+            width: min(100%, 800px);
+            margin: 0 auto;
+        }
+
+        .hero {
+            position: relative;
+            padding: 2.1rem 2.15rem;
+            border-radius: var(--radius-card);
+            background:
+                radial-gradient(circle at top left, rgba(212, 175, 55, 0.24), transparent 28%),
+                radial-gradient(circle at 82% 18%, rgba(155, 123, 181, 0.18), transparent 26%),
+                linear-gradient(135deg, rgba(212, 175, 55, 0.20), rgba(255, 250, 242, 0.96) 44%, rgba(155, 123, 181, 0.16) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.62);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: auto auto 10px -20px;
+            width: 180px;
+            height: 180px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(232, 196, 212, 0.34), transparent 72%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: auto -10% -32% auto;
+            width: 260px;
+            height: 260px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(155, 123, 181, 0.24), transparent 70%);
+            pointer-events: none;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.42rem 0.8rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(255, 248, 232, 0.74));
+            color: #6b5d51;
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .hero-title {
+            margin: 1rem 0 0;
+            font-family: "Montserrat", "Poppins", sans-serif;
+            font-size: 32px;
+            font-weight: 400;
+            line-height: 1.35;
+            letter-spacing: -0.02em;
+            max-width: 16ch;
+        }
+
+        .hero-subtitle {
+            margin: 0.65rem 0 0;
+            max-width: 50ch;
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--muted);
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+            margin-top: 1.35rem;
+        }
+
+        .link-inline {
+            display: inline-flex;
+            align-items: center;
+            min-height: 54px;
+            padding: 0 1.15rem;
+            border-radius: var(--radius-pill);
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+            border: 1px solid rgba(149, 130, 111, 0.12);
+            background: rgba(255, 255, 255, 0.72);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .link-inline:hover { text-decoration: none; }
+
+        .divider {
+            width: min(100%, 800px);
+            margin: 1.45rem auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: rgba(121, 111, 102, 0.75);
+        }
+
+        .divider-line {
+            height: 1px;
+            flex: 1;
+            background: linear-gradient(90deg, transparent, rgba(121, 111, 102, 0.26), transparent);
+        }
+
+        .divider-icon {
+            width: 38px;
+            height: 38px;
+            position: relative;
+        }
+
+        .divider-bottle {
+            position: absolute;
+            left: 50%;
+            bottom: 3px;
+            width: 20px;
+            height: 24px;
+            transform: translateX(-50%);
+            border-radius: 7px 7px 6px 6px;
+            background: linear-gradient(180deg, #fff9dd 0%, #e8c96b 100%);
+            border: 1px solid rgba(212, 175, 55, 0.6);
+        }
+
+        .divider-bottle::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: -6px;
+            width: 9px;
+            height: 7px;
+            transform: translateX(-50%);
+            border-radius: 5px 5px 2px 2px;
+            background: #f8e8a8;
+            border: 1px solid rgba(212, 175, 55, 0.55);
+        }
+
+        .divider-spark {
+            position: absolute;
+            right: 0;
+            top: 0;
+            font-size: 0.9rem;
+            color: var(--purple);
+        }
+
+        .glass,
+        .results-panel {
+            position: relative;
+            padding: 2.15rem;
+            border-radius: var(--radius-card);
+            background:
+                linear-gradient(160deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.42)),
+                linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(155, 123, 181, 0.06));
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(255, 255, 255, 0.66);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .glass::before,
+        .results-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background:
+                radial-gradient(circle at top right, rgba(212, 175, 55, 0.16), transparent 26%),
+                radial-gradient(circle at left bottom, rgba(155, 123, 181, 0.12), transparent 26%);
+            pointer-events: none;
+        }
+
+        .reset-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            min-height: 50px;
+            padding: 0 1.15rem;
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--line);
+            background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,248,237,0.82));
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+            font-size: 15px;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-right: 5.75rem;
+            font-size: 15px;
+            color: #6a6057;
+            font-weight: 500;
+        }
+
+        .progress-track {
+            height: 12px;
+            margin-top: 0.75rem;
+            border-radius: 999px;
+            background: rgba(121, 111, 102, 0.10);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 20%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.86), rgba(231, 197, 90, 1));
+            transition: width 0.36s ease;
+        }
+
+        .stage-shell {
+            position: relative;
+            min-height: 350px;
+            margin-top: 1.75rem;
+        }
+
+        .question-view,
+        .loading-view,
+        .results-panel {
+            transition: opacity 0.28s ease, transform 0.28s ease;
+        }
+
+        .question-view.is-fading {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .question-title {
+            margin: 0;
+            font-family: "Montserrat", "Poppins", sans-serif;
+            font-size: 25px;
+            font-weight: 500;
+            line-height: 1.5;
+            max-width: 24ch;
+        }
+
+        .question-subtitle {
+            margin: 0.5rem 0 0;
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--muted);
+            max-width: 58ch;
+        }
+
+        .answer-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 1rem;
+        }
+
+        .answer-chip {
+            display: inline-flex;
+            align-items: center;
+            min-height: 40px;
+            padding: 0 0.95rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.88), rgba(255,247,235,0.84));
+            border: 1px solid rgba(149, 130, 111, 0.12);
+            box-shadow: var(--shadow-sm);
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1.65rem;
+        }
+
+        .option {
+            position: relative;
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            padding: 1rem 1.15rem;
+            border-radius: var(--radius-pill);
+            border: 1px solid rgba(149, 130, 111, 0.14);
+            background: linear-gradient(135deg, rgba(255,255,255,0.88), rgba(255,251,246,0.82));
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+            font-size: 17px;
+            font-weight: 500;
+            text-align: center;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+            animation: floaty 5.6s ease-in-out infinite;
+        }
+
+        .option:nth-child(2n) { animation-delay: 0.35s; }
+        .option:nth-child(3n) { animation-delay: 0.7s; }
+        .option.tone-gold { background: linear-gradient(135deg, rgba(212, 175, 55, 0.28), rgba(255, 250, 240, 0.92)); }
+        .option.tone-purple { background: linear-gradient(135deg, rgba(155, 123, 181, 0.24), rgba(250, 246, 255, 0.92)); }
+        .option.tone-pink { background: linear-gradient(135deg, rgba(232, 196, 212, 0.30), rgba(255, 248, 252, 0.92)); }
+        .option.tone-green { background: linear-gradient(135deg, rgba(198, 228, 195, 0.34), rgba(247, 255, 247, 0.92)); }
+        .option.tone-blue { background: linear-gradient(135deg, rgba(196, 220, 242, 0.38), rgba(247, 251, 255, 0.92)); }
+        .option.tone-mono { background: linear-gradient(135deg, rgba(237, 239, 243, 0.96), rgba(255, 255, 255, 0.9)); }
+
+        .option:hover,
+        .primary-button:hover,
+        .secondary-button:hover,
+        .favorite-button:hover,
+        .tooltip-button:hover,
+        .reset-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .option:active,
+        .primary-button:active,
+        .secondary-button:active,
+        .favorite-button:active,
+        .tooltip-button:active,
+        .reset-button:active {
+            transform: scale(0.98);
+        }
+
+        .option.is-selected {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.96), rgba(238, 206, 106, 0.98));
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 16px 34px rgba(212, 175, 55, 0.26);
+        }
+
+        .footer-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .browse-link {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--muted);
+            text-decoration: none;
+        }
+
+        .browse-link:hover { color: var(--text); }
+
+        .cta-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .primary-button,
+        .secondary-button {
+            min-height: 54px;
+            padding: 0 1.35rem;
+            border-radius: var(--radius-pill);
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .primary-button {
+            border: 1px solid rgba(212, 175, 55, 0.42);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.96), rgba(236, 204, 107, 0.98));
+            color: var(--text);
+        }
+
+        .secondary-button {
+            border: 1px solid var(--line);
+            background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(255,249,241,0.84));
+            color: var(--text);
+        }
+
+        .primary-button[disabled] {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading-view {
+            display: none;
+            min-height: 320px;
+            place-items: center;
+            text-align: center;
+        }
+
+        .loading-view.is-visible {
+            display: grid;
+        }
+
+        .spinner-ring {
+            width: 82px;
+            height: 82px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(155, 123, 181, 0.14));
+            animation: rotate 1.4s linear infinite;
+        }
+
+        .spinner-bottle {
+            width: 26px;
+            height: 34px;
+            position: relative;
+            border-radius: 9px 9px 7px 7px;
+            background: linear-gradient(180deg, #fff7d7 0%, #efd173 100%);
+            border: 1px solid rgba(212, 175, 55, 0.6);
+        }
+
+        .spinner-bottle::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: -8px;
+            width: 10px;
+            height: 8px;
+            transform: translateX(-50%);
+            border-radius: 5px 5px 2px 2px;
+            background: #faedb7;
+            border: 1px solid rgba(212, 175, 55, 0.55);
+        }
+
+        .loading-title {
+            margin: 1rem 0 0;
+            font-family: "Montserrat", "Poppins", sans-serif;
+            font-size: 25px;
+            font-weight: 500;
+        }
+
+        .loading-copy {
+            margin: 0.55rem 0 0;
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--muted);
+        }
+
+        .results-panel {
+            display: none;
+            margin-top: 1.5rem;
+        }
+
+        .results-panel.is-visible {
+            display: block;
+        }
+
+        .results-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .results-title {
+            margin: 0;
+            font-family: "Montserrat", "Poppins", sans-serif;
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .results-copy {
+            margin: 0.4rem 0 0;
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--muted);
+            max-width: 48ch;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1.35rem;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            padding: 1rem;
+            border-radius: var(--radius-card);
+            background: linear-gradient(160deg, rgba(255,255,255,0.86), rgba(255,250,244,0.70));
+            border: 1px solid rgba(255, 255, 255, 0.66);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(12px);
+            overflow: hidden;
+        }
+
+        .card:nth-child(3n + 1) { background: linear-gradient(160deg, rgba(255,255,255,0.86), rgba(255,249,238,0.72)); }
+        .card:nth-child(3n + 2) { background: linear-gradient(160deg, rgba(255,255,255,0.86), rgba(248,244,255,0.74)); }
+        .card:nth-child(3n + 3) { background: linear-gradient(160deg, rgba(255,255,255,0.86), rgba(252,243,248,0.74)); }
+
+        .card-media {
+            position: relative;
+            aspect-ratio: 1;
+            overflow: hidden;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(155, 123, 181, 0.12));
+        }
+
+        .card-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .favorite-button {
+            position: absolute;
+            top: 0.65rem;
+            right: 0.65rem;
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            background: rgba(255, 255, 255, 0.82);
+            color: rgba(121, 111, 102, 0.95);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .favorite-button.is-active {
+            color: #c36587;
+            background: rgba(255, 255, 255, 0.94);
+        }
+
+        .card-title {
+            margin: 0.9rem 0 0;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .card-meta {
+            margin: 0.25rem 0 0;
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--muted);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.95rem;
+        }
+
+        .tooltip-wrap {
+            position: relative;
+        }
+
+        .tooltip-button {
+            min-height: 44px;
+            padding: 0 1rem;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(255,249,241,0.82));
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+            font-size: 14px;
+        }
+
+        .tooltip {
+            position: absolute;
+            left: 0;
+            bottom: calc(100% + 0.55rem);
+            width: min(240px, calc(100vw - 3rem));
+            padding: 0.8rem 0.9rem;
+            border-radius: 10px;
+            background: rgba(35, 29, 24, 0.96);
+            color: #fffaf2;
+            font-size: 13px;
+            font-weight: 300;
+            line-height: 1.5;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(6px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            z-index: 5;
+        }
+
+        .tooltip-wrap:hover .tooltip,
+        .tooltip-wrap:focus-within .tooltip {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .shop-link {
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.1rem;
+            border-radius: var(--radius-pill);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.96), rgba(236, 204, 107, 0.98));
+            color: var(--text);
+            text-decoration: none;
+            box-shadow: var(--shadow-sm);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .results-bottom {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 1.35rem;
+        }
+
+        .powered {
+            width: min(100%, 800px);
+            margin: 1rem auto 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .powered-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-height: 42px;
+            padding: 0 1rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.82), rgba(255,249,241,0.76));
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            box-shadow: var(--shadow-sm);
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .confetti-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 20;
+        }
+
+        .confetti {
+            position: fixed;
+            top: -20px;
+            width: 8px;
+            height: 18px;
+            border-radius: 999px;
+            opacity: 0.85;
+            animation: confetti-fall 1.6s ease-out forwards;
+        }
+
+        @keyframes floaty {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.9; }
+            100% { transform: translate3d(var(--x), 105vh, 0) rotate(var(--r)); opacity: 0; }
+        }
+
+        @media (max-width: 720px) {
+            .page { padding: 1.5rem 1rem 2rem; }
+            .hero, .glass, .results-panel { width: min(100%, 800px); }
+            .hero, .glass, .results-panel { padding: 1.5rem; }
+            .hero-title { max-width: none; font-size: 28px; }
+            .progress-meta { padding-right: 0; }
+            .options,
+            .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .option { min-height: 56px; font-size: 16px; }
+            .footer-row,
+            .results-head,
+            .results-bottom { align-items: stretch; }
+        }
+
+        @media (max-width: 520px) {
+            .options,
+            .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .footer-row .cta-group,
+            .hero-actions { width: 100%; }
+            .primary-button,
+            .secondary-button { flex: 1; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <section class="hero">
+            <span class="eyebrow">AI-Guided Perfume Match</span>
+            <h1 class="hero-title">Find Your Signature Scent</h1>
+            <p class="hero-subtitle">An exclusive AI-guided journey through our curated fragrance collection</p>
+            <div class="hero-actions">
+                <button class="secondary-button" id="surpriseHero" type="button">Discover Something New 🎲</button>
+                <a class="link-inline" href="https://perfume.fit" target="_blank" rel="noreferrer">Browse All Fragrances →</a>
+            </div>
+        </section>
+
+        <div class="divider" aria-hidden="true">
+            <span class="divider-line"></span>
+            <span class="divider-icon">
+                <span class="divider-bottle"></span>
+                <span class="divider-spark">✦</span>
+            </span>
+            <span class="divider-line"></span>
+        </div>
+
+        <section class="glass" id="quizPanel">
+            <button class="reset-button" id="startOver" type="button">Start Over</button>
+
+            <div class="progress-meta">
+                <span id="progressLabel">Question 1 of 5</span>
+                <span id="progressPercent">20%</span>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="stage-shell">
+                <div class="question-view" id="questionView">
+                    <h2 class="question-title" id="questionTitle"></h2>
+                    <p class="question-subtitle" id="questionSubtitle"></p>
+                    <div class="answer-summary" id="answerSummary"></div>
+                    <div class="options" id="options"></div>
+                    <div class="footer-row">
+                        <a class="browse-link" href="https://perfume.fit" target="_blank" rel="noreferrer">Browse All Fragrances →</a>
+                        <div class="cta-group">
+                            <button class="secondary-button" id="backButton" type="button">Back</button>
+                            <button class="secondary-button" id="surpriseButton" type="button">Discover Something New 🎲</button>
+                            <button class="primary-button" id="nextButton" type="button" disabled>Continue</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="loading-view" id="loadingView">
+                    <div>
+                        <div class="spinner-ring">
+                            <div class="spinner-bottle"></div>
+                        </div>
+                        <h2 class="loading-title">Finding your perfect scent from perfume.fit...</h2>
+                        <p class="loading-copy">Curating a fragrance edit that feels personal, polished, and unmistakably yours.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-panel" id="resultsPanel">
+            <div class="results-head">
+                <div>
+                    <h2 class="results-title">Your fragrance matches</h2>
+                    <p class="results-copy" id="resultsCopy"></p>
+                </div>
+                <div class="cta-group">
+                    <button class="secondary-button" id="resultsSurprise" type="button">Discover Something New 🎲</button>
+                    <button class="secondary-button" id="resultsReset" type="button">Start Over</button>
+                </div>
+            </div>
+
+            <div class="results-grid" id="resultsGrid"></div>
+
+            <div class="results-bottom">
+                <a class="browse-link" href="https://perfume.fit" target="_blank" rel="noreferrer">Browse All Fragrances →</a>
+            </div>
+        </section>
+
+        <div class="powered">
+            <div class="powered-badge">powered by perfume.fit</div>
+        </div>
+    </div>
+
+    <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+    <script>
+        const STORAGE_KEY = "perfume_fit_luxury_quiz";
+        const STORE_URL = "{{ store_url|escapejs }}";
+
+        const questionBank = {
+            shoppingFor: {
+                number: 1,
+                title: "Who are you shopping for?",
+                subtitle: "A quiet starting point for personalizing the journey.",
+                field: "shoppingFor",
+                options: [
+                    { value: "self", label: "👤 For myself" },
+                    { value: "gift", label: "🎁 As a gift" }
+                ]
+            },
+            partnerGender: {
+                number: 2,
+                title: "What is your partner's gender?",
+                subtitle: "This helps us set a more precise direction.",
+                field: "partnerGender",
+                options: [
+                    { value: "male", label: "👨 Male" },
+                    { value: "female", label: "👩 Female" }
+                ]
+            },
+            giftPreference: {
+                number: 3,
+                title: "What type of fragrance would they prefer?",
+                subtitle: "Choose the expression that feels most right.",
+                field: "giftPreference",
+                options: [
+                    { value: "masculine", label: "💪 Masculine" },
+                    { value: "feminine", label: "🌸 Feminine" },
+                    { value: "unisex", label: "🔄 Unisex" }
+                ]
+            },
+            selfGender: {
+                number: 3,
+                title: "What is your gender?",
+                subtitle: "Used as a soft signal, never a strict rule.",
+                field: "selfGender",
+                options: [
+                    { value: "male", label: "👨 Male" },
+                    { value: "female", label: "👩 Female" }
+                ]
+            },
+            colorMood: {
+                number: 4,
+                title: "Choose your color palette or mood",
+                subtitle: "Think atmosphere, style, and how you want the fragrance to feel.",
+                field: "colorMood",
+                options: [
+                    { value: "gold", label: "✨ Gold / Yellow", tone: "gold" },
+                    { value: "pink", label: "🌸 Blush Pink", tone: "pink" },
+                    { value: "purple", label: "🔮 Soft Purple", tone: "purple" },
+                    { value: "green", label: "🌿 Green", tone: "green" },
+                    { value: "blue", label: "💧 Blue", tone: "blue" },
+                    { value: "mono", label: "⚫ Black / White", tone: "mono" }
+                ]
+            },
+            scentFamily: {
+                number: 5,
+                title: "Choose your scent family",
+                subtitle: "The final note in shaping your fragrance profile.",
+                field: "scentFamily",
+                options: [
+                    { value: "floral", label: "🌸 Floral" },
+                    { value: "woody", label: "🌲 Woody" },
+                    { value: "fresh", label: "🍊 Fresh / Citrus" },
+                    { value: "spicy", label: "🔥 Warm / Spicy" },
+                    { value: "sweet", label: "🍰 Sweet / Gourmand" }
+                ]
+            }
+        };
+
+        const colorMeta = {
+            gold: { mood: ["gold", "warm", "luminous", "radiant"], prompt: "golden, luminous, and warm" },
+            pink: { mood: ["pink", "romantic", "soft", "playful"], prompt: "soft, blush-toned, and romantic" },
+            purple: { mood: ["purple", "velvety", "dreamy", "mysterious"], prompt: "velvety, dreamy, and softly mysterious" },
+            green: { mood: ["green", "fresh", "grounded", "clean"], prompt: "green, grounded, and quietly fresh" },
+            blue: { mood: ["blue", "cool", "airy", "clean"], prompt: "cool, blue-toned, and airy" },
+            mono: { mood: ["minimal", "classic", "black", "white"], prompt: "minimal, monochrome, and polished" }
+        };
+
+        const scentMeta = {
+            floral: { notes: ["rose", "jasmine", "peony", "freesia"], prompt: "a floral fragrance family" },
+            woody: { notes: ["cedar", "sandalwood", "vetiver", "woods"], prompt: "a woody fragrance family" },
+            fresh: { notes: ["bergamot", "grapefruit", "lemon", "citrus"], prompt: "a fresh citrus fragrance family" },
+            spicy: { notes: ["amber", "saffron", "spice", "vanilla"], prompt: "a warm spicy fragrance family" },
+            sweet: { notes: ["vanilla", "tonka", "caramel", "sweet"], prompt: "a sweet gourmand fragrance family" }
+        };
+
+        const state = {
+            currentQuestion: "shoppingFor",
+            answers: {},
+            history: [],
+            results: [],
+            favorites: [],
+            isLoading: false
+        };
+
+        const dom = {
+            quizPanel: document.getElementById("quizPanel"),
+            questionView: document.getElementById("questionView"),
+            loadingView: document.getElementById("loadingView"),
+            resultsPanel: document.getElementById("resultsPanel"),
+            progressLabel: document.getElementById("progressLabel"),
+            progressPercent: document.getElementById("progressPercent"),
+            progressFill: document.getElementById("progressFill"),
+            questionTitle: document.getElementById("questionTitle"),
+            questionSubtitle: document.getElementById("questionSubtitle"),
+            answerSummary: document.getElementById("answerSummary"),
+            options: document.getElementById("options"),
+            backButton: document.getElementById("backButton"),
+            nextButton: document.getElementById("nextButton"),
+            surpriseButton: document.getElementById("surpriseButton"),
+            surpriseHero: document.getElementById("surpriseHero"),
+            startOver: document.getElementById("startOver"),
+            resultsGrid: document.getElementById("resultsGrid"),
+            resultsCopy: document.getElementById("resultsCopy"),
+            resultsSurprise: document.getElementById("resultsSurprise"),
+            resultsReset: document.getElementById("resultsReset"),
+            confettiLayer: document.getElementById("confettiLayer")
+        };
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                currentQuestion: state.currentQuestion,
+                answers: state.answers,
+                history: state.history,
+                favorites: state.favorites
+            }));
+        }
+
+        function loadState() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+                if (!saved) return;
+                state.currentQuestion = saved.currentQuestion || state.currentQuestion;
+                state.answers = saved.answers || {};
+                state.history = Array.isArray(saved.history) ? saved.history : [];
+                state.favorites = Array.isArray(saved.favorites) ? saved.favorites : [];
+                state.currentQuestion = deriveQuestion();
+            } catch (error) {
+                localStorage.removeItem(STORAGE_KEY);
+            }
+        }
+
+        function deriveQuestion() {
+            if (!state.answers.shoppingFor) return "shoppingFor";
+            if (state.answers.shoppingFor === "gift") {
+                if (!state.answers.partnerGender) return "partnerGender";
+                if (!state.answers.giftPreference) return "giftPreference";
+            } else if (!state.answers.selfGender) {
+                return "selfGender";
+            }
+            if (!state.answers.colorMood) return "colorMood";
+            if (!state.answers.scentFamily) return "scentFamily";
+            return "scentFamily";
+        }
+
+        function getNextQuestion(field) {
+            if (field === "shoppingFor") return state.answers.shoppingFor === "gift" ? "partnerGender" : "selfGender";
+            if (field === "partnerGender") return "giftPreference";
+            if (field === "giftPreference" || field === "selfGender") return "colorMood";
+            if (field === "colorMood") return "scentFamily";
+            return null;
+        }
+
+        function getQuestionConfig() {
+            return questionBank[state.currentQuestion];
+        }
+
+        function escapeHtml(value) {
+            return String(value || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function labelFor(questionKey, value) {
+            const config = questionBank[questionKey];
+            if (!config) return value;
+            const option = config.options.find((item) => item.value === value);
+            return option ? option.label : value;
+        }
+
+        function renderSummary() {
+            const chips = [];
+            if (state.answers.shoppingFor) chips.push(labelFor("shoppingFor", state.answers.shoppingFor));
+            if (state.answers.partnerGender) chips.push(labelFor("partnerGender", state.answers.partnerGender));
+            if (state.answers.giftPreference) chips.push(labelFor("giftPreference", state.answers.giftPreference));
+            if (state.answers.selfGender) chips.push(labelFor("selfGender", state.answers.selfGender));
+            if (state.answers.colorMood) chips.push(labelFor("colorMood", state.answers.colorMood));
+            if (state.answers.scentFamily) chips.push(labelFor("scentFamily", state.answers.scentFamily));
+            dom.answerSummary.innerHTML = chips.map((chip) => `<span class="answer-chip">${escapeHtml(chip)}</span>`).join("");
+        }
+
+        function renderQuestion() {
+            const config = getQuestionConfig();
+            const selectedValue = state.answers[config.field];
+            dom.progressLabel.textContent = `Question ${config.number} of 5`;
+            dom.progressPercent.textContent = `${Math.round((config.number / 5) * 100)}%`;
+            dom.progressFill.style.width = `${(config.number / 5) * 100}%`;
+            dom.questionTitle.textContent = config.title;
+            dom.questionSubtitle.textContent = config.subtitle;
+            renderSummary();
+            dom.options.innerHTML = config.options.map((option) => `
+                <button class="option${selectedValue === option.value ? " is-selected" : ""}${option.tone ? ` tone-${option.tone}` : ""}" type="button" data-value="${option.value}">
+                    <span>${escapeHtml(option.label)}</span>
+                </button>
+            `).join("");
+            dom.options.querySelectorAll("[data-value]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    state.answers[config.field] = button.dataset.value;
+                    saveState();
+                    renderQuestion();
+                });
+            });
+            dom.backButton.disabled = state.history.length === 0;
+            dom.nextButton.disabled = !state.answers[config.field];
+            dom.nextButton.textContent = state.currentQuestion === "scentFamily" ? "Reveal My Matches ✨" : "Continue";
+        }
+
+        function fadeToQuestion(nextQuestion, pushCurrent = true) {
+            if (pushCurrent) state.history.push(state.currentQuestion);
+            dom.questionView.classList.add("is-fading");
+            window.setTimeout(() => {
+                state.currentQuestion = nextQuestion;
+                saveState();
+                renderQuestion();
+                dom.questionView.classList.remove("is-fading");
+            }, 180);
+        }
+
+        function goBack() {
+            if (!state.history.length) return;
+            const previous = state.history.pop();
+            dom.questionView.classList.add("is-fading");
+            window.setTimeout(() => {
+                state.currentQuestion = previous;
+                saveState();
+                renderQuestion();
+                dom.questionView.classList.remove("is-fading");
+            }, 180);
+        }
+
+        function buildPayload() {
+            const color = colorMeta[state.answers.colorMood] || colorMeta.gold;
+            const scent = scentMeta[state.answers.scentFamily] || scentMeta.fresh;
+            const promptParts = ["Find a luxury fragrance recommendation."];
+            if (state.answers.shoppingFor === "gift") {
+                promptParts.push("This is a gift.");
+                if (state.answers.partnerGender) promptParts.push(`Partner gender: ${state.answers.partnerGender}.`);
+                if (state.answers.giftPreference) promptParts.push(`Style: ${state.answers.giftPreference}.`);
+            } else {
+                promptParts.push("This is for me.");
+                if (state.answers.selfGender) promptParts.push(`Gender: ${state.answers.selfGender}.`);
+            }
+            promptParts.push(`Mood: ${color.prompt}.`);
+            promptParts.push(`Family: ${scent.prompt}.`);
+            return {
+                prompt: promptParts.join(" "),
+                notes: scent.notes.join(", "),
+                mood: color.mood.join(", "),
+                vibe: color.mood.join(", "),
+                occasion: state.answers.shoppingFor === "gift" ? "gift" : "signature scent",
+                gender: state.answers.selfGender || "",
+                partner_gender: state.answers.partnerGender || "",
+                fragrance_type: state.answers.giftPreference || "",
+                shopping_for: state.answers.shoppingFor || "self",
+                color_palette: state.answers.colorMood || "",
+                scent_family: state.answers.scentFamily || ""
+            };
+        }
+
+        function setLoading(isLoading) {
+            state.isLoading = isLoading;
+            dom.loadingView.classList.toggle("is-visible", isLoading);
+            dom.questionView.style.display = isLoading ? "none" : "block";
+        }
+
+        function parsePrice(value) {
+            const match = String(value || "").match(/(\d+(?:\.\d+)?)/);
+            return match ? Number(match[1]) : null;
+        }
+
+        function renderResults() {
+            const descriptors = [];
+            if (state.answers.colorMood) descriptors.push(labelFor("colorMood", state.answers.colorMood));
+            if (state.answers.scentFamily) descriptors.push(labelFor("scentFamily", state.answers.scentFamily));
+            dom.resultsCopy.textContent = descriptors.length ? `Chosen around ${descriptors.join(" and ")}.` : "A refined edit based on your answers.";
+            dom.resultsGrid.innerHTML = state.results.map((item) => {
+                const id = item.product_id || item.name;
+                const image = item.image_url && /^https?:\/\//i.test(item.image_url) ? item.image_url : "";
+                const favoriteClass = state.favorites.includes(String(id)) ? " is-active" : "";
+                return `
+                    <article class="card">
+                        <div class="card-media">
+                            ${image ? `<img src="${image}" alt="${escapeHtml(item.name)}">` : ""}
+                            <button class="favorite-button${favoriteClass}" type="button" data-favorite="${escapeHtml(String(id))}" aria-label="Save to favorites">♡</button>
+                        </div>
+                        <h3 class="card-title">${escapeHtml(item.name)}</h3>
+                        <p class="card-meta">${escapeHtml(item.brand || "perfume.fit")} · ${escapeHtml(item.price || "View pricing")}</p>
+                        <div class="card-footer">
+                            <div class="tooltip-wrap">
+                                <button class="tooltip-button" type="button">Why we picked these</button>
+                                <div class="tooltip">${escapeHtml(item.why_it_matches || "A strong fit for the profile you created.")}</div>
+                            </div>
+                            <a class="shop-link" href="${escapeHtml(item.product_url || item.shop_url || STORE_URL)}" target="_blank" rel="noreferrer">Shop Now</a>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+
+            dom.resultsGrid.querySelectorAll("[data-favorite]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const key = button.dataset.favorite;
+                    if (state.favorites.includes(key)) {
+                        state.favorites = state.favorites.filter((item) => item !== key);
+                    } else {
+                        state.favorites.push(key);
+                    }
+                    saveState();
+                    renderResults();
+                });
+            });
+
+            launchConfetti();
+        }
+
+        async function fetchResults() {
+            setLoading(true);
+            dom.resultsPanel.classList.remove("is-visible");
+            try {
+                const response = await fetch("/api/recommend/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(buildPayload())
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || "Unable to load fragrance matches.");
+                state.results = Array.isArray(data.recommendations) ? data.recommendations : [];
+                renderResults();
+                dom.resultsPanel.classList.add("is-visible");
+                dom.resultsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+            } catch (error) {
+                state.results = [{
+                    name: "Try again in a moment",
+                    brand: "perfume.fit",
+                    price: "",
+                    why_it_matches: error.message || "We couldn't reveal matches right now.",
+                    product_url: STORE_URL
+                }];
+                renderResults();
+                dom.resultsPanel.classList.add("is-visible");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function launchConfetti() {
+            dom.confettiLayer.innerHTML = "";
+            const colors = ["rgba(212,175,55,0.92)", "rgba(155,123,181,0.85)", "rgba(232,196,212,0.9)", "rgba(255,255,255,0.95)"];
+            for (let index = 0; index < 22; index += 1) {
+                const piece = document.createElement("span");
+                piece.className = "confetti";
+                piece.style.left = `${10 + Math.random() * 80}%`;
+                piece.style.background = colors[index % colors.length];
+                piece.style.setProperty("--x", `${(Math.random() - 0.5) * 200}px`);
+                piece.style.setProperty("--r", `${Math.round((Math.random() - 0.5) * 280)}deg`);
+                piece.style.animationDelay = `${Math.random() * 0.14}s`;
+                dom.confettiLayer.appendChild(piece);
+            }
+            window.setTimeout(() => {
+                dom.confettiLayer.innerHTML = "";
+            }, 1800);
+        }
+
+        function resetQuiz() {
+            state.currentQuestion = "shoppingFor";
+            state.answers = {};
+            state.history = [];
+            state.results = [];
+            state.favorites = [];
+            localStorage.removeItem(STORAGE_KEY);
+            dom.resultsPanel.classList.remove("is-visible");
+            renderQuestion();
+        }
+
+        function surpriseMe() {
+            const colorKeys = Object.keys(colorMeta);
+            const scentKeys = Object.keys(scentMeta);
+            const gender = Math.random() > 0.5 ? "male" : "female";
+            state.answers = {
+                shoppingFor: "self",
+                selfGender: gender,
+                colorMood: colorKeys[Math.floor(Math.random() * colorKeys.length)],
+                scentFamily: scentKeys[Math.floor(Math.random() * scentKeys.length)]
+            };
+            state.history = ["shoppingFor", "selfGender", "colorMood"];
+            state.currentQuestion = "scentFamily";
+            saveState();
+            renderQuestion();
+            fetchResults();
+        }
+
+        function advance() {
+            const config = getQuestionConfig();
+            if (!state.answers[config.field]) return;
+            if (state.currentQuestion === "scentFamily") {
+                saveState();
+                fetchResults();
+                return;
+            }
+            const next = getNextQuestion(config.field);
+            if (next) fadeToQuestion(next);
+        }
+
+        dom.backButton.addEventListener("click", goBack);
+        dom.nextButton.addEventListener("click", advance);
+        dom.startOver.addEventListener("click", resetQuiz);
+        dom.surpriseButton.addEventListener("click", surpriseMe);
+        dom.surpriseHero.addEventListener("click", surpriseMe);
+        dom.resultsSurprise.addEventListener("click", surpriseMe);
+        dom.resultsReset.addEventListener("click", resetQuiz);
+
+        loadState();
+        renderQuestion();
+    </script>
+</body>
+</html>

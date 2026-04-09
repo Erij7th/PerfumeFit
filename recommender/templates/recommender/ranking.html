@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Perfume Fit Perspective Ranking</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #fffdf9;
+            --panel: rgba(255, 255, 255, 0.94);
+            --text: #201913;
+            --muted: #6d6053;
+            --line: #eee4d8;
+            --gold-1: #ffe08a;
+            --gold-2: #f3bf39;
+            --gold-3: #b78615;
+            --pink: rgba(255, 214, 234, 0.55);
+            --purple: rgba(230, 220, 255, 0.6);
+            --green: rgba(220, 244, 220, 0.62);
+            --blue: rgba(220, 236, 255, 0.68);
+            --shadow-lg: 0 28px 70px rgba(42, 28, 11, 0.10);
+            --shadow-md: 0 18px 36px rgba(42, 28, 11, 0.08);
+            --shadow-sm: 0 10px 22px rgba(42, 28, 11, 0.06);
+            --radius-xl: 36px;
+            --radius-lg: 28px;
+            --radius-md: 22px;
+            --font-main: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: var(--font-main);
+            color: var(--text);
+            background:
+                radial-gradient(circle at 8% 8%, rgba(255, 224, 138, 0.36), transparent 22%),
+                radial-gradient(circle at 92% 16%, rgba(230, 220, 255, 0.52), transparent 24%),
+                radial-gradient(circle at 84% 88%, rgba(220, 236, 255, 0.52), transparent 26%),
+                radial-gradient(circle at 16% 84%, rgba(220, 244, 220, 0.48), transparent 22%),
+                linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+        }
+
+        a,
+        button {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .page-shell {
+            width: min(1040px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 32px 0 60px;
+        }
+
+        .hero,
+        .panel,
+        .thank-you {
+            background: var(--panel);
+            border: 1px solid rgba(238, 228, 216, 0.92);
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(14px);
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+            gap: 24px;
+            padding: 28px;
+            border-radius: 40px;
+            margin-bottom: 22px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 16px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255, 224, 138, 0.24);
+            color: #8d6613;
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2.35rem, 5vw, 4.6rem);
+            line-height: 0.96;
+            max-width: 11ch;
+        }
+
+        .hero-copy p {
+            margin: 18px 0 0;
+            max-width: 58ch;
+            color: var(--muted);
+            line-height: 1.75;
+            font-size: 1.04rem;
+        }
+
+        .hero-aside {
+            padding: 18px;
+            border-radius: 30px;
+            background:
+                radial-gradient(circle at top right, rgba(255, 224, 138, 0.34), transparent 34%),
+                linear-gradient(180deg, #fffef9 0%, #fff9f1 100%);
+            border: 1px solid rgba(238, 228, 216, 0.95);
+        }
+
+        .aside-card {
+            padding: 18px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(238, 228, 216, 0.95);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .aside-card + .aside-card {
+            margin-top: 12px;
+        }
+
+        .aside-title {
+            margin: 0 0 8px;
+            font-size: 0.95rem;
+        }
+
+        .aside-copy {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .panel {
+            border-radius: 40px;
+            padding: 28px;
+        }
+
+        .ranking-head {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .ranking-title {
+            margin: 0;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            line-height: 1.04;
+        }
+
+        .ranking-copy {
+            margin: 10px 0 0;
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 60ch;
+        }
+
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .soft-badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid rgba(238, 228, 216, 1);
+            box-shadow: var(--shadow-sm);
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .scale {
+            margin-top: 26px;
+            padding: 20px;
+            border-radius: var(--radius-xl);
+            background:
+                linear-gradient(180deg, rgba(255, 224, 138, 0.12) 0%, rgba(255, 255, 255, 0.2) 38%, rgba(255, 224, 138, 0.12) 100%),
+                #fff;
+            border: 1px solid rgba(238, 228, 216, 0.95);
+            box-shadow: var(--shadow-md);
+        }
+
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            color: #876716;
+            font-size: 0.86rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .scale-label-bottom {
+            margin-top: 14px;
+            text-align: right;
+        }
+
+        .ranking-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 12px;
+        }
+
+        .rank-card {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 14px;
+            align-items: center;
+            padding: 16px;
+            border-radius: 28px;
+            background: #fff;
+            border: 1px solid rgba(238, 228, 216, 0.96);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+        }
+
+        .rank-card.is-dragging {
+            opacity: 0.65;
+            transform: scale(1.01);
+            box-shadow: 0 22px 42px rgba(242, 191, 57, 0.18);
+            border-color: rgba(183, 134, 21, 0.46);
+        }
+
+        .rank-card.is-over {
+            border-color: rgba(183, 134, 21, 0.46);
+            background: linear-gradient(135deg, rgba(255, 224, 138, 0.2), rgba(255, 255, 255, 1));
+        }
+
+        .rank-number {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255, 224, 138, 0.34), rgba(255, 255, 255, 1));
+            border: 1px solid rgba(238, 228, 216, 1);
+            font-weight: 700;
+            color: #8c6914;
+        }
+
+        .rank-content {
+            min-width: 0;
+        }
+
+        .rank-title {
+            margin: 0;
+            font-size: 1.06rem;
+        }
+
+        .rank-helper {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .rank-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .drag-handle {
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            border: 1px solid rgba(238, 228, 216, 1);
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+            color: var(--muted);
+        }
+
+        .move-stack {
+            display: grid;
+            gap: 8px;
+        }
+
+        .move-button {
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            border: 1px solid rgba(238, 228, 216, 1);
+            background: #fff;
+            color: var(--muted);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .panel-footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            margin-top: 22px;
+        }
+
+        .panel-note {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 56ch;
+        }
+
+        .primary-button,
+        .secondary-button,
+        .continue-link,
+        .chat-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 54px;
+            padding: 0 22px;
+            border-radius: 999px;
+            text-decoration: none;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .primary-button,
+        .continue-link {
+            border: 1px solid rgba(183, 134, 21, 0.42);
+            background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+            color: var(--text);
+            box-shadow: 0 18px 34px rgba(242, 191, 57, 0.22);
+        }
+
+        .secondary-button,
+        .chat-chip {
+            border: 1px solid rgba(238, 228, 216, 1);
+            background: #fff;
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .primary-button:hover,
+        .secondary-button:hover,
+        .continue-link:hover,
+        .chat-chip:hover,
+        .drag-handle:hover,
+        .move-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .thank-you {
+            display: none;
+            margin-top: 22px;
+            padding: 28px;
+            border-radius: 40px;
+        }
+
+        .thank-you.is-visible {
+            display: block;
+        }
+
+        .thank-you h2 {
+            margin: 0;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            line-height: 1.08;
+        }
+
+        .thank-you p {
+            margin: 14px 0 0;
+            color: var(--muted);
+            line-height: 1.85;
+            font-size: 1.02rem;
+        }
+
+        .thank-you-actions {
+            margin-top: 22px;
+        }
+    </style>
+    <style>
+        .aura-trigger {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            width: 64px;
+            height: 64px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            border: 1px solid rgba(238, 228, 216, 1);
+            background: linear-gradient(135deg, #ffffff, #fff7e8);
+            box-shadow: var(--shadow-lg);
+            z-index: 30;
+        }
+
+        .aura-trigger:hover .aura-tooltip,
+        .aura-trigger:focus-visible .aura-tooltip {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .aura-icon {
+            position: relative;
+            width: 28px;
+            height: 38px;
+        }
+
+        .aura-bottle {
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: 22px;
+            height: 30px;
+            border-radius: 9px 9px 7px 7px;
+            transform: translateX(-50%);
+            background: linear-gradient(180deg, #fff7da 0%, #f5ca5a 100%);
+            border: 2px solid rgba(183, 134, 21, 0.42);
+        }
+
+        .aura-bottle::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: -8px;
+            width: 10px;
+            height: 10px;
+            border-radius: 6px 6px 3px 3px;
+            transform: translateX(-50%);
+            background: #fff2bd;
+            border: 2px solid rgba(183, 134, 21, 0.42);
+        }
+
+        .aura-sparkle {
+            position: absolute;
+            right: -2px;
+            top: 0;
+            color: #b78615;
+            font-size: 0.95rem;
+        }
+
+        .aura-tooltip {
+            position: absolute;
+            right: 74px;
+            bottom: 50%;
+            transform: translateY(8px);
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(32, 25, 19, 0.94);
+            color: #fffaf3;
+            white-space: nowrap;
+            font-size: 0.92rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+        }
+
+        .aura-panel {
+            position: fixed;
+            right: 22px;
+            bottom: 98px;
+            width: min(360px, calc(100% - 28px));
+            padding: 20px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(238, 228, 216, 1);
+            box-shadow: var(--shadow-lg);
+            z-index: 30;
+            display: none;
+        }
+
+        .aura-panel.is-open {
+            display: block;
+        }
+
+        .aura-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .aura-title {
+            margin: 0;
+            font-size: 1.05rem;
+        }
+
+        .aura-close {
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            border: 1px solid rgba(238, 228, 216, 1);
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .aura-message,
+        .aura-response {
+            margin: 14px 0 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .chat-chip-stack {
+            display: grid;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .chat-chip {
+            justify-content: flex-start;
+            text-align: left;
+            min-height: 48px;
+            padding: 12px 16px;
+        }
+
+        .aura-response {
+            padding: 14px 16px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255, 224, 138, 0.16), rgba(255, 255, 255, 1));
+            border: 1px solid rgba(238, 228, 216, 1);
+        }
+
+        @media (max-width: 960px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .page-shell {
+                width: min(100% - 18px, 100%);
+                padding: 18px 0 42px;
+            }
+
+            .hero,
+            .panel,
+            .thank-you {
+                border-radius: 28px;
+                padding: 20px;
+            }
+
+            .ranking-head,
+            .panel-footer {
+                display: block;
+            }
+
+            .badge-row,
+            .panel-footer > * + * {
+                margin-top: 14px;
+            }
+
+            .rank-card {
+                grid-template-columns: auto 1fr;
+            }
+
+            .rank-actions {
+                grid-column: 1 / -1;
+                justify-content: space-between;
+                padding-left: 56px;
+            }
+
+            .aura-trigger {
+                right: 16px;
+                bottom: 16px;
+            }
+
+            .aura-panel {
+                right: 14px;
+                bottom: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page-shell">
+        <section class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">Before Fragrance Discovery</p>
+                <h1>Place these from what you know least about to what you know most about.</h1>
+                <p>There is no correct order here. This step helps perfume.fit listen with more care before it recommends with confidence. Drag the cards into place in the order that feels most honest to you.</p>
+            </div>
+            <aside class="hero-aside">
+                <div class="aside-card">
+                    <p class="aside-title">Why this matters</p>
+                    <p class="aside-copy">Personalization works best when it understands perspective, not just preference.</p>
+                </div>
+                <div class="aside-card">
+                    <p class="aside-title">How to rank</p>
+                    <p class="aside-copy">Top means “know least about.” Bottom means “know most about.” On phones, you can also use the arrow buttons.</p>
+                </div>
+            </aside>
+        </section>
+
+        <section class="panel" id="rankingPanel">
+            <div class="ranking-head">
+                <div>
+                    <h2 class="ranking-title">Rank your familiarity, not your worth.</h2>
+                    <p class="ranking-copy">Sort these identity categories by your own lived familiarity. We are not looking for perfection. We are looking for your point of view.</p>
+                </div>
+                <div class="badge-row">
+                    <span class="soft-badge">Subtle</span>
+                    <span class="soft-badge">Private</span>
+                    <span class="soft-badge">For better matching</span>
+                </div>
+            </div>
+
+            <div class="scale">
+                <div class="scale-labels">
+                    <span>Know least about</span>
+                    <span>Drag to reorder</span>
+                </div>
+                <ol class="ranking-list" id="rankingList" aria-label="Rank identity categories from least familiar to most familiar"></ol>
+                <div class="scale-labels scale-label-bottom">
+                    <span></span>
+                    <span>Know most about</span>
+                </div>
+            </div>
+
+            <div class="panel-footer">
+                <p class="panel-note">Take your time. If you change your mind, drag again or use the move controls to adjust the order before continuing.</p>
+                <button class="primary-button" id="submitButton" type="button">Continue</button>
+            </div>
+        </section>
+
+        <section class="thank-you" id="thankYouPanel" aria-live="polite">
+            <h2>Thank you. Your responses have been noted — not judged, just noted.</h2>
+            <p>At perfume.fit, we believe the most personalized fragrance journey starts with understanding you. Not just what you like to smell, but how you see the world. This helps us recommend with precision, not assumption. Ready for your scent profile?</p>
+            <div class="thank-you-actions">
+                <a class="continue-link" href="{% url 'recommender:fragrance_discovery' %}">Continue to fragrance discovery →</a>
+            </div>
+        </section>
+    </main>
+
+    <button class="aura-trigger" id="auraTrigger" type="button" aria-label="Open Aura assistant">
+        <span class="aura-icon" aria-hidden="true">
+            <span class="aura-bottle"></span>
+            <span class="aura-sparkle">✦</span>
+        </span>
+        <span class="aura-tooltip">Ask Aura</span>
+    </button>
+
+    <aside class="aura-panel" id="auraPanel" aria-label="Aura AI assistant">
+        <div class="aura-head">
+            <div>
+                <h3 class="aura-title">Aura (AI Assistant)</h3>
+            </div>
+            <button class="aura-close" id="auraClose" type="button" aria-label="Close Aura assistant">×</button>
+        </div>
+        <p class="aura-message">Hi — I'm Aura. I don't guess your taste. I learn it. Ask me anything about how this works, fragrance families, or why we're asking about identity. No pressure. No perfume jargon… okay, maybe a little.</p>
+        <div class="chat-chip-stack">
+            <button class="chat-chip" type="button" data-reply="why">Why am I ranking these?</button>
+            <button class="chat-chip" type="button" data-reply="unsure">What if I'm unsure about an answer?</button>
+            <button class="chat-chip" type="button" data-reply="affect">Will this affect my fragrance recommendations?</button>
+            <button class="chat-chip" type="button" data-reply="next">Just take me to the next step</button>
+        </div>
+        <div class="aura-response" id="auraResponse" hidden></div>
+    </aside>
+    <script>
+        const initialItems = [
+            {
+                id: "sexuality",
+                title: "Sexuality",
+                helper: "How familiar you feel with experiences shaped by sexuality."
+            },
+            {
+                id: "race",
+                title: "Race",
+                helper: "How familiar you feel with lived experience shaped by race."
+            },
+            {
+                id: "ability",
+                title: "Ability",
+                helper: "How familiar you feel with disability, access, and ability."
+            },
+            {
+                id: "social-class",
+                title: "Social class",
+                helper: "How familiar you feel with class, financial mobility, and status."
+            },
+            {
+                id: "gender",
+                title: "Gender",
+                helper: "How familiar you feel with the lived experience of gender."
+            }
+        ];
+
+        const auraReplies = {
+            why: "Because scent is personal, and perspective shapes taste. This ranking helps us understand where your familiarity begins and where it stretches, so we can personalize with more sensitivity and less assumption.",
+            unsure: "Uncertainty is okay. There is no test here. If you are unsure, choose the order that feels most true today. A thoughtful imperfect answer is more useful than a forced perfect one.",
+            affect: "Only in a supportive way. It helps perfume.fit interpret your preferences with more context, so recommendations feel more precise and less generic.",
+            next: "Finish the ranking when you're ready, then continue to fragrance discovery. If you've already submitted, you're ready for the next step."
+        };
+
+        const state = {
+            items: shuffle(initialItems.slice()),
+            draggingId: null,
+            submitted: false
+        };
+
+        const rankingList = document.getElementById("rankingList");
+        const submitButton = document.getElementById("submitButton");
+        const rankingPanel = document.getElementById("rankingPanel");
+        const thankYouPanel = document.getElementById("thankYouPanel");
+        const auraTrigger = document.getElementById("auraTrigger");
+        const auraPanel = document.getElementById("auraPanel");
+        const auraClose = document.getElementById("auraClose");
+        const auraResponse = document.getElementById("auraResponse");
+
+        function shuffle(items) {
+            for (let index = items.length - 1; index > 0; index -= 1) {
+                const randomIndex = Math.floor(Math.random() * (index + 1));
+                [items[index], items[randomIndex]] = [items[randomIndex], items[index]];
+            }
+            return items;
+        }
+
+        function renderList() {
+            rankingList.innerHTML = state.items.map((item, index) => `
+                <li class="rank-card" data-id="${item.id}" draggable="true">
+                    <div class="rank-number">${index + 1}</div>
+                    <div class="rank-content">
+                        <h3 class="rank-title">${escapeHtml(item.title)}</h3>
+                        <p class="rank-helper">${escapeHtml(item.helper)}</p>
+                    </div>
+                    <div class="rank-actions">
+                        <button class="drag-handle" type="button" aria-label="Drag ${escapeHtml(item.title)}" title="Drag to reorder">⋮⋮</button>
+                        <div class="move-stack">
+                            <button class="move-button" type="button" data-move="up" data-id="${item.id}" aria-label="Move ${escapeHtml(item.title)} up">↑</button>
+                            <button class="move-button" type="button" data-move="down" data-id="${item.id}" aria-label="Move ${escapeHtml(item.title)} down">↓</button>
+                        </div>
+                    </div>
+                </li>
+            `).join("");
+
+            attachListEvents();
+        }
+
+        function attachListEvents() {
+            rankingList.querySelectorAll(".rank-card").forEach((card) => {
+                card.addEventListener("dragstart", handleDragStart);
+                card.addEventListener("dragover", handleDragOver);
+                card.addEventListener("dragleave", handleDragLeave);
+                card.addEventListener("drop", handleDrop);
+                card.addEventListener("dragend", clearDragState);
+            });
+
+            rankingList.querySelectorAll(".move-button").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const { id, move } = button.dataset;
+                    moveItem(id, move === "up" ? -1 : 1);
+                });
+            });
+        }
+
+        function handleDragStart(event) {
+            const card = event.currentTarget;
+            state.draggingId = card.dataset.id;
+            card.classList.add("is-dragging");
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData("text/plain", state.draggingId);
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            const card = event.currentTarget;
+            if (card.dataset.id !== state.draggingId) {
+                card.classList.add("is-over");
+            }
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove("is-over");
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            const targetCard = event.currentTarget;
+            const targetId = targetCard.dataset.id;
+            targetCard.classList.remove("is-over");
+            if (!state.draggingId || state.draggingId === targetId) {
+                clearDragState();
+                return;
+            }
+
+            const fromIndex = state.items.findIndex((item) => item.id === state.draggingId);
+            const toIndex = state.items.findIndex((item) => item.id === targetId);
+            const rect = targetCard.getBoundingClientRect();
+            const insertAfter = event.clientY > rect.top + (rect.height / 2);
+            const [movedItem] = state.items.splice(fromIndex, 1);
+            let nextIndex = toIndex;
+            if (fromIndex < toIndex) {
+                nextIndex = insertAfter ? toIndex : toIndex - 1;
+            } else {
+                nextIndex = insertAfter ? toIndex + 1 : toIndex;
+            }
+            state.items.splice(nextIndex, 0, movedItem);
+            clearDragState();
+            renderList();
+        }
+
+        function clearDragState() {
+            state.draggingId = null;
+            rankingList.querySelectorAll(".rank-card").forEach((card) => {
+                card.classList.remove("is-dragging", "is-over");
+            });
+        }
+
+        function moveItem(id, direction) {
+            const currentIndex = state.items.findIndex((item) => item.id === id);
+            const nextIndex = currentIndex + direction;
+            if (currentIndex < 0 || nextIndex < 0 || nextIndex >= state.items.length) {
+                return;
+            }
+            [state.items[currentIndex], state.items[nextIndex]] = [state.items[nextIndex], state.items[currentIndex]];
+            renderList();
+        }
+
+        function escapeHtml(value) {
+            return String(value || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+    </script>
+    <script>
+        function submitRanking() {
+            sessionStorage.setItem("perfume_fit_identity_ranking", JSON.stringify(state.items.map((item) => item.id)));
+            state.submitted = true;
+            rankingPanel.hidden = true;
+            thankYouPanel.classList.add("is-visible");
+            thankYouPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        function toggleAura(forceOpen) {
+            const shouldOpen = typeof forceOpen === "boolean" ? forceOpen : !auraPanel.classList.contains("is-open");
+            auraPanel.classList.toggle("is-open", shouldOpen);
+        }
+
+        function answerAura(key) {
+            if (key === "next" && state.submitted) {
+                window.location.href = "{% url 'recommender:fragrance_discovery' %}";
+                return;
+            }
+
+            auraResponse.hidden = false;
+            auraResponse.textContent = auraReplies[key];
+
+            if (key === "next" && !state.submitted) {
+                submitButton.focus();
+                submitButton.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
+
+        submitButton.addEventListener("click", submitRanking);
+        auraTrigger.addEventListener("click", () => toggleAura());
+        auraClose.addEventListener("click", () => toggleAura(false));
+
+        auraPanel.querySelectorAll("[data-reply]").forEach((button) => {
+            button.addEventListener("click", () => answerAura(button.dataset.reply));
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                toggleAura(false);
+            }
+        });
+
+        document.addEventListener("click", (event) => {
+            if (!auraPanel.classList.contains("is-open")) {
+                return;
+            }
+            if (auraPanel.contains(event.target) || auraTrigger.contains(event.target)) {
+                return;
+            }
+            toggleAura(false);
+        });
+
+        renderList();
+    </script>
+</body>
+</html>

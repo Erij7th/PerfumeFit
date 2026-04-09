@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Perfume Fit AI Recommender</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #ffffff;
+            --panel: rgba(255, 255, 255, 0.94);
+            --text: #231b14;
+            --muted: #746659;
+            --line: #eee5d8;
+            --gold-1: #ffdf7a;
+            --gold-2: #f2bc2e;
+            --gold-3: #c99514;
+            --pink: #ffd8ea;
+            --purple: #eadbff;
+            --green: #dff5db;
+            --blue: #dceeff;
+            --mono: #eef1f5;
+            --shadow-lg: 0 24px 60px rgba(41, 24, 6, 0.10);
+            --shadow-md: 0 18px 36px rgba(41, 24, 6, 0.08);
+            --radius-xl: 34px;
+            --radius-pill: 40px;
+            --font-main: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: var(--font-main);
+            color: var(--text);
+            background:
+                radial-gradient(circle at 14% 12%, rgba(255, 223, 122, 0.32), transparent 20%),
+                radial-gradient(circle at 84% 14%, rgba(234, 219, 255, 0.65), transparent 24%),
+                radial-gradient(circle at 84% 78%, rgba(220, 238, 255, 0.68), transparent 24%),
+                radial-gradient(circle at 12% 82%, rgba(223, 245, 219, 0.65), transparent 22%),
+                linear-gradient(180deg, #ffffff 0%, #fffdfa 100%);
+        }
+
+        a {
+            color: inherit;
+        }
+
+        button,
+        input,
+        textarea {
+            font: inherit;
+        }
+
+        .page-shell {
+            width: min(1180px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 28px 0 48px;
+        }
+
+        .hero-panel,
+        .stage-panel {
+            background: var(--panel);
+            border: 1px solid rgba(233, 223, 211, 0.88);
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(14px);
+        }
+
+        .hero-panel {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.85fr);
+            gap: 26px;
+            padding: 26px;
+            border-radius: 38px;
+            margin-bottom: 22px;
+        }
+
+        .hero-copy {
+            padding: 10px 8px 6px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 14px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255, 223, 122, 0.22);
+            color: #8b6611;
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2.5rem, 5vw, 4.6rem);
+            line-height: 0.93;
+            max-width: 10ch;
+        }
+
+        .hero-copy p {
+            margin: 18px 0 0;
+            max-width: 60ch;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 1.02rem;
+        }
+
+        .hero-actions,
+        .results-actions,
+        .quiz-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .capsule-button,
+        .capsule-link,
+        .capsule-option,
+        .filter-pill {
+            border-radius: var(--radius-pill);
+            border: 1px solid rgba(209, 190, 168, 0.65);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+            will-change: transform;
+        }
+
+        .capsule-button,
+        .capsule-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 52px;
+            padding: 0 22px;
+            background: #fff;
+            color: var(--text);
+            text-decoration: none;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+        }
+
+        .capsule-button:hover,
+        .capsule-link:hover,
+        .capsule-option:hover,
+        .filter-pill:hover {
+            transform: translateY(-2px);
+        }
+
+        .capsule-button.accent,
+        .capsule-link.accent {
+            background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+            border-color: rgba(201, 149, 20, 0.45);
+        }
+
+        .hero-preview {
+            border-radius: 32px;
+            padding: 20px;
+            background:
+                radial-gradient(circle at top right, rgba(255, 223, 122, 0.42), transparent 34%),
+                linear-gradient(180deg, #fffdf8 0%, #fffaf1 100%);
+            border: 1px solid rgba(233, 223, 211, 0.9);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+        }
+
+        .preview-card {
+            padding: 16px;
+            border-radius: 26px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(238, 229, 216, 0.95);
+            box-shadow: var(--shadow-md);
+        }
+
+        .preview-card + .preview-card {
+            margin-top: 12px;
+        }
+
+        .preview-title {
+            margin: 0 0 10px;
+            font-size: 1rem;
+        }
+
+        .preview-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mini-pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            font-size: 0.92rem;
+        }
+
+        .mini-pill.gold { background: rgba(255, 223, 122, 0.34); }
+        .mini-pill.pink { background: rgba(255, 216, 234, 0.72); }
+        .mini-pill.purple { background: rgba(234, 219, 255, 0.74); }
+        .mini-pill.green { background: rgba(223, 245, 219, 0.74); }
+        .mini-pill.blue { background: rgba(220, 238, 255, 0.74); }
+
+        .stage-panel {
+            border-radius: 38px;
+            padding: 28px;
+        }
+
+        .stage {
+            display: none;
+        }
+
+        .stage.is-active {
+            display: block;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 12px;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .progress-track {
+            height: 12px;
+            border-radius: 999px;
+            background: rgba(242, 236, 228, 0.85);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 20%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+            transition: width 0.3s ease;
+        }
+
+        .question-wrap {
+            margin-top: 26px;
+            padding: 28px;
+            border-radius: var(--radius-xl);
+            background:
+                radial-gradient(circle at top right, rgba(255, 223, 122, 0.18), transparent 36%),
+                #fff;
+            border: 1px solid rgba(238, 229, 216, 0.95);
+            box-shadow: var(--shadow-md);
+        }
+
+        .question-label {
+            margin: 0 0 10px;
+            color: #97731c;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.8rem;
+        }
+
+        .question-title {
+            margin: 0;
+            font-size: clamp(1.8rem, 4vw, 2.7rem);
+            line-height: 1.06;
+        }
+
+        .question-helper {
+            margin: 12px 0 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .summary-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 18px 0 0;
+        }
+
+        .summary-pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: rgba(250, 246, 239, 1);
+            border: 1px solid rgba(238, 229, 216, 1);
+            color: #6f604f;
+            font-size: 0.9rem;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 26px;
+        }
+
+        .capsule-option {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-height: 74px;
+            padding: 16px 20px;
+            background: #fff;
+            color: var(--text);
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .capsule-option.is-selected,
+        .filter-pill.is-active {
+            background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+            border-color: rgba(201, 149, 20, 0.5);
+            box-shadow: 0 18px 34px rgba(242, 188, 46, 0.26);
+        }
+
+        .capsule-option.is-popping,
+        .filter-pill.is-popping {
+            animation: pill-pop 0.28s ease;
+        }
+
+        .capsule-option .emoji {
+            font-size: 1.28rem;
+            line-height: 1;
+        }
+
+        .capsule-option .label {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .capsule-option.tone-gold { background: rgba(255, 223, 122, 0.28); }
+        .capsule-option.tone-pink { background: rgba(255, 216, 234, 0.82); }
+        .capsule-option.tone-purple { background: rgba(234, 219, 255, 0.86); }
+        .capsule-option.tone-green { background: rgba(223, 245, 219, 0.9); }
+        .capsule-option.tone-blue { background: rgba(220, 238, 255, 0.92); }
+        .capsule-option.tone-mono { background: rgba(238, 241, 245, 0.95); }
+    </style>
+    <style>
+        .quiz-actions {
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-actions .left-actions,
+        .quiz-actions .right-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .quiz-note {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .loading-shell {
+            min-height: 420px;
+            display: grid;
+            place-items: center;
+            text-align: center;
+        }
+
+        .loading-card {
+            width: min(520px, 100%);
+            padding: 34px 28px;
+            border-radius: var(--radius-xl);
+            background: #fff;
+            border: 1px solid rgba(238, 229, 216, 0.95);
+            box-shadow: var(--shadow-md);
+        }
+
+        .spinner-wrap {
+            width: 92px;
+            height: 92px;
+            margin: 0 auto 18px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255, 223, 122, 0.36), rgba(255, 216, 234, 0.42));
+            animation: rotate-loader 1.4s linear infinite;
+        }
+
+        .perfume-bottle {
+            position: relative;
+            width: 38px;
+            height: 56px;
+            border-radius: 14px 14px 12px 12px;
+            background: linear-gradient(180deg, #fff9ec 0%, #f6cf6a 100%);
+            border: 2px solid rgba(201, 149, 20, 0.48);
+            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.42);
+        }
+
+        .perfume-bottle::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: -12px;
+            width: 18px;
+            height: 14px;
+            border-radius: 8px 8px 4px 4px;
+            transform: translateX(-50%);
+            background: #f7e5ac;
+            border: 2px solid rgba(201, 149, 20, 0.48);
+        }
+
+        .loading-title {
+            margin: 0;
+            font-size: 1.6rem;
+        }
+
+        .loading-copy {
+            margin: 10px 0 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .results-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 18px;
+            align-items: flex-start;
+        }
+
+        .results-title {
+            margin: 6px 0 0;
+            font-size: clamp(1.9rem, 4vw, 2.8rem);
+            line-height: 1.05;
+        }
+
+        .results-subtitle {
+            margin: 12px 0 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .filter-bar {
+            margin-top: 22px;
+            padding: 18px;
+            border-radius: 28px;
+            background: rgba(255, 250, 244, 0.88);
+            border: 1px solid rgba(238, 229, 216, 0.95);
+        }
+
+        .filter-group + .filter-group {
+            margin-top: 14px;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.92rem;
+            color: var(--muted);
+        }
+
+        .filter-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-pill {
+            min-height: 46px;
+            padding: 0 16px;
+            background: #fff;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 18px;
+            margin-top: 22px;
+        }
+
+        .result-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 18px;
+            border-radius: 30px;
+            background: #fff;
+            border: 1px solid rgba(238, 229, 216, 0.95);
+            box-shadow: var(--shadow-md);
+        }
+
+        .result-media {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 24px;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at top right, rgba(255, 223, 122, 0.3), transparent 34%),
+                linear-gradient(180deg, #fffaf1 0%, #fff 100%);
+            border: 1px solid rgba(238, 229, 216, 0.95);
+        }
+
+        .result-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .result-placeholder {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            place-items: center;
+            font-size: 2.4rem;
+            color: #a8842b;
+        }
+
+        .result-name {
+            margin: 16px 0 8px;
+            font-size: 1.14rem;
+            line-height: 1.35;
+        }
+
+        .result-meta,
+        .result-copy {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .result-copy {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+            margin-top: 10px;
+            min-height: 4.8em;
+        }
+
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .result-tag {
+            display: inline-flex;
+            align-items: center;
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: rgba(249, 244, 236, 1);
+            border: 1px solid rgba(238, 229, 216, 1);
+            color: #6f604f;
+            font-size: 0.86rem;
+        }
+
+        .result-footer {
+            margin-top: auto;
+            padding-top: 16px;
+        }
+
+        .shop-button {
+            width: 100%;
+            min-height: 52px;
+            border: 1px solid rgba(201, 149, 20, 0.5);
+            border-radius: var(--radius-pill);
+            background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+            box-shadow: 0 18px 34px rgba(242, 188, 46, 0.2);
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .results-empty {
+            margin-top: 22px;
+            padding: 26px;
+            border-radius: 28px;
+            background: #fff;
+            border: 1px solid rgba(238, 229, 216, 0.95);
+            box-shadow: var(--shadow-md);
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .burst-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 30;
+        }
+
+        .burst-emoji {
+            position: fixed;
+            left: 0;
+            top: 0;
+            font-size: 1.35rem;
+            opacity: 0;
+            animation: emoji-burst 1s ease-out forwards;
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 22px;
+            transform: translateX(-50%) translateY(18px);
+            min-width: 240px;
+            max-width: calc(100% - 28px);
+            padding: 14px 18px;
+            border-radius: 999px;
+            background: rgba(35, 27, 20, 0.94);
+            color: #fffaf1;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.22s ease, opacity 0.22s ease;
+            z-index: 40;
+        }
+
+        .toast.is-visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @keyframes pill-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes rotate-loader {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes emoji-burst {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+            15% { opacity: 1; }
+            100% {
+                opacity: 0;
+                transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--spin));
+            }
+        }
+
+        @media (max-width: 980px) {
+            .hero-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .page-shell {
+                width: min(100% - 18px, 100%);
+                padding: 18px 0 32px;
+            }
+
+            .hero-panel,
+            .stage-panel {
+                border-radius: 28px;
+                padding: 18px;
+            }
+
+            .question-wrap {
+                padding: 22px 18px;
+                border-radius: 24px;
+            }
+
+            .option-grid,
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .capsule-option {
+                min-height: 68px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page-shell">
+        <section class="hero-panel">
+            <div class="hero-copy">
+                <p class="eyebrow">Perfume Fit Quiz</p>
+                <h1>Perfume Fit AI Recommender</h1>
+                <p>Clean, bright, and playful like your store. This quiz uses gold-forward styling, soft rounded capsules, and fragrance picks from <a href="{{ store_url }}" target="_blank" rel="noreferrer">{{ store_url }}</a> to find a scent that fits the mood you want to wear or gift.</p>
+                <div class="hero-actions">
+                    <a class="capsule-link accent" href="{{ store_url }}" target="_blank" rel="noreferrer">Shop perfume.fit</a>
+                    <button class="capsule-button" id="surpriseLaunch" type="button">🎲 Surprise Me</button>
+                </div>
+            </div>
+            <aside class="hero-preview">
+                <div class="preview-card">
+                    <p class="preview-title">Mood palette</p>
+                    <div class="preview-pills">
+                        <span class="mini-pill gold">✨ Gold</span>
+                        <span class="mini-pill pink">❤️ Pink</span>
+                        <span class="mini-pill purple">🔮 Purple</span>
+                        <span class="mini-pill green">🌿 Green</span>
+                        <span class="mini-pill blue">💧 Blue</span>
+                    </div>
+                </div>
+                <div class="preview-card">
+                    <p class="preview-title">Scent families</p>
+                    <div class="preview-pills">
+                        <span class="mini-pill pink">🌸 Floral</span>
+                        <span class="mini-pill green">🌲 Woody</span>
+                        <span class="mini-pill blue">🍊 Fresh</span>
+                        <span class="mini-pill gold">🔥 Spicy</span>
+                        <span class="mini-pill purple">🍰 Sweet</span>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="stage-panel">
+            <div class="stage is-active" id="quizStage">
+                <div class="progress-meta">
+                    <span id="progressLabel">Question 1 of 5</span>
+                    <span id="progressPercent">20%</span>
+                </div>
+                <div class="progress-track" aria-hidden="true">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="question-wrap">
+                    <p class="question-label" id="questionLabel">Tap a capsule to continue</p>
+                    <h2 class="question-title" id="questionTitle">Who are you shopping for?</h2>
+                    <p class="question-helper" id="questionHelper">Choose one and the quiz will keep moving automatically.</p>
+                    <div class="summary-row" id="summaryRow"></div>
+                    <div class="option-grid" id="optionGrid"></div>
+                </div>
+
+                <div class="quiz-actions">
+                    <div class="left-actions">
+                        <button class="capsule-button" id="backButton" type="button">← Back</button>
+                        <button class="capsule-button" id="resetButton" type="button">↺ Start Over</button>
+                    </div>
+                    <div class="right-actions"></div>
+                </div>
+            </div>
+
+            <div class="stage" id="loadingStage">
+                <div class="loading-shell">
+                    <div class="loading-card">
+                        <div class="spinner-wrap" aria-hidden="true">
+                            <div class="perfume-bottle"></div>
+                        </div>
+                        <h2 class="loading-title">Finding your perfect scent from perfume.fit...</h2>
+                        <p class="loading-copy">Blending your answers into a fragrance profile with a little more care and a little less guesswork.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stage" id="resultsStage">
+                <div class="results-header">
+                    <div>
+                        <p class="eyebrow">Your Results</p>
+                        <h2 class="results-title">Signature scents picked from perfume.fit</h2>
+                        <p class="results-subtitle" id="resultsSubtitle"></p>
+                    </div>
+                    <div class="results-actions">
+                        <button class="capsule-button" id="shareButton" type="button">📤 Share My Results</button>
+                        <button class="capsule-button accent" id="surpriseResults" type="button">🎲 Surprise Me</button>
+                        <button class="capsule-button" id="retakeButton" type="button">↺ Retake Quiz</button>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <span class="filter-label">Sort by</span>
+                        <div class="filter-pills" id="sortPills"></div>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">Filter by price</span>
+                        <div class="filter-pills" id="pricePills"></div>
+                    </div>
+                </div>
+
+                <div class="results-grid" id="resultsGrid"></div>
+                <div class="results-empty" id="resultsEmpty" hidden></div>
+            </div>
+        </section>
+    </main>
+
+    <div class="burst-layer" id="burstLayer" aria-hidden="true"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script>
+        window.quizApp = {
+            STORE_URL: "{{ store_url|escapejs }}",
+            colorOptions: {
+                gold: { label: "✨ Gold/Yellow", tone: "gold", mood: ["gold", "yellow", "luminous", "warm", "radiant"], prompt: "a gold and yellow mood with bright, glowing energy", emojis: ["✨", "⭐", "✨", "⭐", "✨"] },
+                pink: { label: "❤️ Pink/Red", tone: "pink", mood: ["pink", "red", "romantic", "playful", "vibrant"], prompt: "a pink and red mood with romantic, playful energy", emojis: ["❤️", "❤️", "❤️", "💗", "💕"] },
+                purple: { label: "🔮 Purple", tone: "purple", mood: ["purple", "mysterious", "dreamy", "luxury", "velvety"], prompt: "a purple mood with dreamy, mysterious depth", emojis: ["🔮", "🦄", "🔮", "✨", "💜"] },
+                green: { label: "🌿 Green", tone: "green", mood: ["green", "fresh", "natural", "grounded", "clean"], prompt: "a green mood with fresh, grounded energy", emojis: ["🌿", "🌱", "🍃", "🌿", "🍀"] },
+                blue: { label: "💧 Blue", tone: "blue", mood: ["blue", "clean", "cool", "aquatic", "airy"], prompt: "a blue mood with cool, airy freshness", emojis: ["💧", "💧", "💦", "🫧", "💧"] },
+                mono: { label: "⚫ Black/White", tone: "mono", mood: ["black", "white", "minimal", "clean", "classic"], prompt: "a black and white mood with classic, minimal polish", emojis: ["⚫", "⚪", "⚫", "⚪", "◐"] }
+            },
+            scentOptions: {
+                floral: { label: "🌸 Floral", notes: ["rose", "jasmine", "peony", "freesia"], prompt: "a floral scent family" },
+                woody: { label: "🌲 Woody", notes: ["cedar", "sandalwood", "vetiver", "woods"], prompt: "a woody scent family" },
+                fresh: { label: "🍊 Fresh/Citrus", notes: ["bergamot", "grapefruit", "lemon", "citrus"], prompt: "a fresh citrus scent family" },
+                spicy: { label: "🔥 Warm/Spicy", notes: ["amber", "saffron", "spice", "vanilla"], prompt: "a warm spicy scent family" },
+                sweet: { label: "🍰 Sweet/Gourmand", notes: ["vanilla", "tonka", "caramel", "sweet"], prompt: "a sweet gourmand scent family" }
+            },
+            questionBank: {
+                shoppingFor: { number: 1, title: "Who are you shopping for?", helper: "Choose one and we will branch the quiz for you.", field: "shoppingFor", options: [{ value: "self", label: "👤 For myself" }, { value: "gift", label: "🎁 As a gift" }] },
+                partnerGender: { number: 2, title: "What is your partner's gender?", helper: "This helps us steer the catalog in the right direction.", field: "partnerGender", options: [{ value: "male", label: "👨 Male" }, { value: "female", label: "👩 Female" }] },
+                giftPreference: { number: 3, title: "What type of fragrance would they prefer?", helper: "Pick the fragrance direction that feels right.", field: "giftPreference", options: [{ value: "masculine", label: "💪 Masculine" }, { value: "feminine", label: "🌸 Feminine" }, { value: "unisex", label: "🔄 Unisex" }] },
+                selfGender: { number: 3, title: "What is your gender?", helper: "We use this as a light signal, not a hard rule.", field: "selfGender", options: [{ value: "male", label: "👨 Male" }, { value: "female", label: "👩 Female" }] },
+                colorMood: { number: 4, title: "Choose your color palette or mood:", helper: "Tap the palette that feels most like your signature vibe.", field: "colorMood", options: [{ value: "gold", label: "✨ Gold/Yellow", tone: "gold" }, { value: "pink", label: "❤️ Pink/Red", tone: "pink" }, { value: "purple", label: "🔮 Purple", tone: "purple" }, { value: "green", label: "🌿 Green", tone: "green" }, { value: "blue", label: "💧 Blue", tone: "blue" }, { value: "mono", label: "⚫ Black/White", tone: "mono" }] },
+                scentFamily: { number: 5, title: "Choose your scent family:", helper: "Last step. Pick the family that sounds delicious, clean, or iconic to you.", field: "scentFamily", options: [{ value: "floral", label: "🌸 Floral" }, { value: "woody", label: "🌲 Woody" }, { value: "fresh", label: "🍊 Fresh/Citrus" }, { value: "spicy", label: "🔥 Warm/Spicy" }, { value: "sweet", label: "🍰 Sweet/Gourmand" }] }
+            },
+            sortChoices: [
+                { value: "low", label: "Price: Low-High" },
+                { value: "high", label: "Price: High-Low" },
+                { value: "name", label: "Name A-Z" }
+            ],
+            priceChoices: [
+                { value: "under50", label: "Under $50" },
+                { value: "50to100", label: "$50-$100" },
+                { value: "100plus", label: "$100+" }
+            ],
+            state: { stage: "quiz", currentQuestion: "shoppingFor", history: [], answers: {}, rawResults: [], visibleResults: [], sort: null, priceFilter: null }
+        };
+    </script>
+    <script>
+        const app = window.quizApp;
+        app.dom = {
+            quizStage: document.getElementById("quizStage"),
+            loadingStage: document.getElementById("loadingStage"),
+            resultsStage: document.getElementById("resultsStage"),
+            progressLabel: document.getElementById("progressLabel"),
+            progressPercent: document.getElementById("progressPercent"),
+            progressFill: document.getElementById("progressFill"),
+            questionLabel: document.getElementById("questionLabel"),
+            questionTitle: document.getElementById("questionTitle"),
+            questionHelper: document.getElementById("questionHelper"),
+            optionGrid: document.getElementById("optionGrid"),
+            summaryRow: document.getElementById("summaryRow"),
+            backButton: document.getElementById("backButton"),
+            resetButton: document.getElementById("resetButton"),
+            surpriseLaunch: document.getElementById("surpriseLaunch"),
+            surpriseResults: document.getElementById("surpriseResults"),
+            retakeButton: document.getElementById("retakeButton"),
+            shareButton: document.getElementById("shareButton"),
+            sortPills: document.getElementById("sortPills"),
+            pricePills: document.getElementById("pricePills"),
+            resultsGrid: document.getElementById("resultsGrid"),
+            resultsEmpty: document.getElementById("resultsEmpty"),
+            resultsSubtitle: document.getElementById("resultsSubtitle"),
+            burstLayer: document.getElementById("burstLayer"),
+            toast: document.getElementById("toast")
+        };
+
+        app.toastTimer = null;
+
+        app.setStage = function setStage(stage) {
+            const { quizStage, loadingStage, resultsStage } = app.dom;
+            app.state.stage = stage;
+            quizStage.classList.toggle("is-active", stage === "quiz");
+            loadingStage.classList.toggle("is-active", stage === "loading");
+            resultsStage.classList.toggle("is-active", stage === "results");
+        };
+
+        app.animatePop = function animatePop(element) {
+            element.classList.remove("is-popping");
+            void element.offsetWidth;
+            element.classList.add("is-popping");
+            element.addEventListener("animationend", () => element.classList.remove("is-popping"), { once: true });
+        };
+
+        app.escapeHtml = function escapeHtml(value) {
+            return String(value || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        };
+
+        app.normaliseUrl = function normaliseUrl(value) {
+            const candidate = String(value || "");
+            return /^https?:\/\//i.test(candidate) ? candidate : app.STORE_URL;
+        };
+
+        app.labelFromQuestion = function labelFromQuestion(questionKey, value) {
+            const config = app.questionBank[questionKey];
+            const option = config.options.find((item) => item.value === value);
+            return option ? option.label : value;
+        };
+
+        app.renderSummary = function renderSummary() {
+            const { answers } = app.state;
+            const chips = [];
+            if (answers.shoppingFor === "gift") chips.push("🎁 Gift");
+            if (answers.shoppingFor === "self") chips.push("👤 Myself");
+            if (answers.partnerGender) chips.push(answers.partnerGender === "male" ? "👨 Male" : "👩 Female");
+            if (answers.giftPreference) chips.push(app.labelFromQuestion("giftPreference", answers.giftPreference));
+            if (answers.selfGender) chips.push(answers.selfGender === "male" ? "👨 Male" : "👩 Female");
+            if (answers.colorMood) chips.push(app.colorOptions[answers.colorMood].label);
+            if (answers.scentFamily) chips.push(app.scentOptions[answers.scentFamily].label);
+            app.dom.summaryRow.innerHTML = chips.map((chip) => `<span class="summary-pill">${chip}</span>`).join("");
+        };
+
+        app.createEmojiBurst = function createEmojiBurst(x, y, emojis) {
+            const total = 10 + Math.floor(Math.random() * 6);
+            for (let index = 0; index < total; index += 1) {
+                const emoji = document.createElement("span");
+                emoji.className = "burst-emoji";
+                emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                emoji.style.left = `${x}px`;
+                emoji.style.top = `${y}px`;
+                emoji.style.setProperty("--dx", `${Math.round((Math.random() - 0.5) * 170)}px`);
+                emoji.style.setProperty("--dy", `${Math.round(-70 - Math.random() * 120)}px`);
+                emoji.style.setProperty("--spin", `${Math.round((Math.random() - 0.5) * 80)}deg`);
+                app.dom.burstLayer.appendChild(emoji);
+                window.setTimeout(() => emoji.remove(), 1000);
+            }
+        };
+
+        app.getNextQuestion = function getNextQuestion(field) {
+            if (field === "shoppingFor") return app.state.answers.shoppingFor === "gift" ? "partnerGender" : "selfGender";
+            if (field === "partnerGender") return "giftPreference";
+            if (field === "giftPreference" || field === "selfGender") return "colorMood";
+            if (field === "colorMood") return "scentFamily";
+            return null;
+        };
+
+        app.renderOptions = function renderOptions(config) {
+            const { optionGrid } = app.dom;
+            optionGrid.innerHTML = "";
+            config.options.forEach((option) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "capsule-option";
+                if (option.tone) button.classList.add(`tone-${option.tone}`);
+                if (app.state.answers[config.field] === option.value) button.classList.add("is-selected");
+                const parts = option.label.split(" ");
+                const emoji = parts.shift();
+                button.innerHTML = `<span class="emoji">${emoji}</span><span class="label">${parts.join(" ")}</span>`;
+                button.addEventListener("click", (event) => app.handleOptionSelection(config, option, button, event));
+                optionGrid.appendChild(button);
+            });
+        };
+
+        app.renderQuestion = function renderQuestion() {
+            const config = app.questionBank[app.state.currentQuestion];
+            app.dom.progressLabel.textContent = `Question ${config.number} of 5`;
+            app.dom.progressPercent.textContent = `${Math.round((config.number / 5) * 100)}%`;
+            app.dom.progressFill.style.width = `${(config.number / 5) * 100}%`;
+            app.dom.questionLabel.textContent = "Tap a capsule to continue";
+            app.dom.questionTitle.textContent = config.title;
+            app.dom.questionHelper.textContent = config.helper;
+            app.renderSummary();
+            app.renderOptions(config);
+            app.dom.backButton.disabled = app.state.history.length === 0;
+            app.dom.backButton.style.opacity = app.state.history.length === 0 ? "0.55" : "1";
+        };
+
+        app.handleOptionSelection = function handleOptionSelection(config, option, button, event) {
+            app.animatePop(button);
+            app.state.answers[config.field] = option.value;
+            if (config.field === "colorMood") {
+                const rect = button.getBoundingClientRect();
+                app.createEmojiBurst(event.clientX || rect.left + (rect.width / 2), event.clientY || rect.top + (rect.height / 2), app.colorOptions[option.value].emojis);
+            }
+            app.renderOptions(config);
+            app.renderSummary();
+            window.setTimeout(() => {
+                const nextQuestion = app.getNextQuestion(config.field);
+                if (nextQuestion) {
+                    app.state.history.push(app.state.currentQuestion);
+                    app.state.currentQuestion = nextQuestion;
+                    app.renderQuestion();
+                } else {
+                    app.submitQuiz();
+                }
+            }, 170);
+        };
+    </script>
+    <script>
+        const quiz = window.quizApp;
+
+        quiz.buildPayload = function buildPayload() {
+            const color = quiz.colorOptions[quiz.state.answers.colorMood] || quiz.colorOptions.gold;
+            const scent = quiz.scentOptions[quiz.state.answers.scentFamily] || quiz.scentOptions.fresh;
+            const promptParts = [];
+
+            if (quiz.state.answers.shoppingFor === "gift") {
+                promptParts.push("Shopping for a gift.");
+                if (quiz.state.answers.partnerGender) promptParts.push(`Partner gender: ${quiz.state.answers.partnerGender}.`);
+                if (quiz.state.answers.giftPreference) promptParts.push(`Preferred style: ${quiz.state.answers.giftPreference}.`);
+            } else if (quiz.state.answers.shoppingFor === "self") {
+                promptParts.push("Shopping for myself.");
+                if (quiz.state.answers.selfGender) promptParts.push(`Gender: ${quiz.state.answers.selfGender}.`);
+            } else {
+                promptParts.push("Surprise me with a signature scent.");
+            }
+
+            promptParts.push(`Mood: ${color.prompt}.`);
+            promptParts.push(`Scent family: ${scent.prompt}.`);
+
+            return {
+                shopping_for: quiz.state.answers.shoppingFor || "surprise",
+                partner_gender: quiz.state.answers.partnerGender || "",
+                gender: quiz.state.answers.selfGender || "",
+                fragrance_type: quiz.state.answers.giftPreference || "",
+                color_palette: quiz.state.answers.colorMood || "",
+                scent_family: quiz.state.answers.scentFamily || "",
+                prompt: promptParts.join(" "),
+                mood: color.mood.join(", "),
+                vibe: color.mood.join(", "),
+                notes: scent.notes.join(", "),
+                occasion: quiz.state.answers.shoppingFor === "gift" ? "gift" : "signature scent"
+            };
+        };
+
+        quiz.parsePrice = function parsePrice(price) {
+            if (!price) return null;
+            const match = String(price).match(/(\d+(?:\.\d+)?)/);
+            return match ? Number(match[1]) : null;
+        };
+
+        quiz.sortPriceValue = function sortPriceValue(price) {
+            return price == null ? Number.POSITIVE_INFINITY : price;
+        };
+
+        quiz.matchesPriceFilter = function matchesPriceFilter(price, filterValue) {
+            if (!filterValue) return true;
+            if (price == null) return false;
+            if (filterValue === "under50") return price < 50;
+            if (filterValue === "50to100") return price >= 50 && price <= 100;
+            if (filterValue === "100plus") return price > 100;
+            return true;
+        };
+
+        quiz.buildResultsSubtitle = function buildResultsSubtitle() {
+            const pieces = [];
+            if (quiz.state.answers.colorMood) pieces.push(quiz.colorOptions[quiz.state.answers.colorMood].label);
+            if (quiz.state.answers.scentFamily) pieces.push(quiz.scentOptions[quiz.state.answers.scentFamily].label);
+            if (quiz.state.answers.shoppingFor === "gift") pieces.push("Gift pick");
+            if (quiz.state.answers.shoppingFor === "self") pieces.push("Personal pick");
+            return pieces.length ? `Based on ${pieces.join(" • ")}.` : "A polished edit from perfume.fit.";
+        };
+
+        quiz.renderResultsGrid = function renderResultsGrid() {
+            const { resultsGrid, resultsEmpty } = quiz.dom;
+            if (!quiz.state.visibleResults.length) {
+                resultsGrid.innerHTML = "";
+                resultsEmpty.hidden = false;
+                resultsEmpty.innerHTML = `No products matched that filter combination. Try a different price pill, hit <strong>Surprise Me</strong>, or browse <a href="${quiz.STORE_URL}" target="_blank" rel="noreferrer">${quiz.STORE_URL}</a>.`;
+                return;
+            }
+
+            resultsEmpty.hidden = true;
+            resultsGrid.innerHTML = quiz.state.visibleResults.map((item) => {
+                const safeName = quiz.escapeHtml(item.name || "Perfume");
+                const safeBrand = quiz.escapeHtml(item.brand || "Perfume Fit");
+                const safeDescription = quiz.escapeHtml(item.description || item.why_it_matches || "");
+                const safePrice = quiz.escapeHtml(item.price || "See store");
+                const safeUrl = quiz.normaliseUrl(item.product_url || item.shop_url || quiz.STORE_URL);
+                const safeImage = quiz.normaliseUrl(item.image_url || "");
+                const noteTags = Array.isArray(item.notes) ? item.notes.slice(0, 3) : [];
+
+                return `
+                    <article class="result-card">
+                        <div class="result-media">
+                            ${safeImage ? `<img src="${safeImage}" alt="${safeName}">` : `<div class="result-placeholder">✨</div>`}
+                        </div>
+                        <h3 class="result-name">${safeName}</h3>
+                        <p class="result-meta"><strong>${safeBrand}</strong> | ${safePrice}</p>
+                        <p class="result-copy">${safeDescription}</p>
+                        <div class="result-tags">
+                            ${noteTags.map((note) => `<span class="result-tag">${quiz.escapeHtml(note)}</span>`).join("")}
+                        </div>
+                        <div class="result-footer">
+                            <a class="capsule-link shop-button" href="${safeUrl}" target="_blank" rel="noreferrer">Shop Now</a>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+        };
+
+        quiz.applyFilters = function applyFilters() {
+            const filtered = quiz.state.rawResults.filter((item) => quiz.matchesPriceFilter(quiz.parsePrice(item.price), quiz.state.priceFilter));
+            if (quiz.state.sort === "low") filtered.sort((a, b) => quiz.sortPriceValue(quiz.parsePrice(a.price)) - quiz.sortPriceValue(quiz.parsePrice(b.price)));
+            if (quiz.state.sort === "high") filtered.sort((a, b) => quiz.sortPriceValue(quiz.parsePrice(b.price)) - quiz.sortPriceValue(quiz.parsePrice(a.price)));
+            if (quiz.state.sort === "name") filtered.sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+            quiz.state.visibleResults = filtered;
+            quiz.renderResultsGrid();
+        };
+
+        quiz.renderFilterControls = function renderFilterControls() {
+            quiz.dom.sortPills.innerHTML = quiz.sortChoices.map((choice) => `<button class="filter-pill${quiz.state.sort === choice.value ? " is-active" : ""}" type="button" data-sort="${choice.value}">${choice.label}</button>`).join("");
+            quiz.dom.pricePills.innerHTML = quiz.priceChoices.map((choice) => `<button class="filter-pill${quiz.state.priceFilter === choice.value ? " is-active" : ""}" type="button" data-price="${choice.value}">${choice.label}</button>`).join("");
+
+            quiz.dom.sortPills.querySelectorAll("[data-sort]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    quiz.animatePop(button);
+                    quiz.state.sort = quiz.state.sort === button.dataset.sort ? null : button.dataset.sort;
+                    quiz.renderFilterControls();
+                    quiz.applyFilters();
+                });
+            });
+
+            quiz.dom.pricePills.querySelectorAll("[data-price]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    quiz.animatePop(button);
+                    quiz.state.priceFilter = quiz.state.priceFilter === button.dataset.price ? null : button.dataset.price;
+                    quiz.renderFilterControls();
+                    quiz.applyFilters();
+                });
+            });
+        };
+
+        quiz.renderResults = function renderResults() {
+            quiz.dom.resultsSubtitle.textContent = quiz.buildResultsSubtitle();
+            quiz.renderFilterControls();
+            quiz.applyFilters();
+        };
+
+        quiz.showToast = function showToast(message) {
+            quiz.dom.toast.textContent = message;
+            quiz.dom.toast.classList.add("is-visible");
+            window.clearTimeout(quiz.toastTimer);
+            quiz.toastTimer = window.setTimeout(() => quiz.dom.toast.classList.remove("is-visible"), 2200);
+        };
+
+        quiz.resetQuiz = function resetQuiz() {
+            quiz.state.currentQuestion = "shoppingFor";
+            quiz.state.history = [];
+            quiz.state.answers = {};
+            quiz.state.rawResults = [];
+            quiz.state.visibleResults = [];
+            quiz.state.sort = null;
+            quiz.state.priceFilter = null;
+            quiz.setStage("quiz");
+            quiz.renderQuestion();
+        };
+
+        quiz.goBack = function goBack() {
+            if (!quiz.state.history.length) return;
+            quiz.state.currentQuestion = quiz.state.history.pop();
+            quiz.setStage("quiz");
+            quiz.renderQuestion();
+        };
+
+        quiz.runSurpriseMe = function runSurpriseMe() {
+            const colorKeys = Object.keys(quiz.colorOptions);
+            const scentKeys = Object.keys(quiz.scentOptions);
+            quiz.state.answers = {
+                shoppingFor: "surprise",
+                colorMood: colorKeys[Math.floor(Math.random() * colorKeys.length)],
+                scentFamily: scentKeys[Math.floor(Math.random() * scentKeys.length)]
+            };
+            quiz.state.history = [];
+            quiz.submitQuiz();
+        };
+
+        quiz.shareResults = async function shareResults() {
+            const text = "I found my signature scent on perfume.fit!";
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: "Perfume Fit AI Recommender", text, url: quiz.STORE_URL });
+                    return;
+                } catch (error) {
+                    if (error && error.name === "AbortError") return;
+                }
+            }
+            try {
+                await navigator.clipboard.writeText(`${text} ${quiz.STORE_URL}`);
+                quiz.showToast("Share text copied to clipboard.");
+            } catch (error) {
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${text} ${quiz.STORE_URL}`)}`, "_blank", "noopener");
+            }
+        };
+
+        quiz.submitQuiz = async function submitQuiz() {
+            quiz.setStage("loading");
+            try {
+                const response = await fetch("/api/recommend/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(quiz.buildPayload())
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || "We could not load recommendations right now.");
+                quiz.state.rawResults = Array.isArray(data.recommendations) ? data.recommendations : [];
+                quiz.state.sort = null;
+                quiz.state.priceFilter = null;
+                quiz.renderResults();
+                quiz.setStage("results");
+            } catch (error) {
+                quiz.state.rawResults = [];
+                quiz.dom.resultsGrid.innerHTML = "";
+                quiz.dom.resultsEmpty.hidden = false;
+                quiz.dom.resultsEmpty.innerHTML = `<strong>We could not load your matches.</strong><br>${quiz.escapeHtml(error.message || "Try again in a moment.")}<br><br><a class="capsule-link accent" href="${quiz.STORE_URL}" target="_blank" rel="noreferrer">Shop ${quiz.STORE_URL.replace("https://", "")}</a>`;
+                quiz.dom.resultsSubtitle.textContent = "Your preferences are set. Please try again in a moment for your fragrance edit.";
+                quiz.renderFilterControls();
+                quiz.setStage("results");
+            }
+        };
+
+        quiz.dom.backButton.addEventListener("click", quiz.goBack);
+        quiz.dom.resetButton.addEventListener("click", quiz.resetQuiz);
+        quiz.dom.retakeButton.addEventListener("click", quiz.resetQuiz);
+        quiz.dom.surpriseLaunch.addEventListener("click", quiz.runSurpriseMe);
+        quiz.dom.surpriseResults.addEventListener("click", quiz.runSurpriseMe);
+        quiz.dom.shareButton.addEventListener("click", quiz.shareResults);
+        quiz.renderQuestion();
+    </script>
+</body>
+</html>
