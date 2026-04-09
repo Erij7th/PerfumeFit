@@ -2,56 +2,39 @@
 
 ## What is this?
 
-I made a quiz that helps people find perfumes they'll like on my store (perfume.fit). It asks a few questions and then suggests actual products from my shop.
+I built a quiz that helps people find perfumes they'll like on my store. It asks questions and recommends real products from perfume.fit.
 
-## Try it out
+## Try it right now
 
-- **Live demo:** https://perfumefit.onrender.com
-- **My store:** https://perfume.fit
+Just go to **https://perfume.fit** and click "AI Fragrance Finder" in the menu.
+
+Or try the demo here: https://perfumefit.onrender.com
 
 ## How it works
 
-1. You answer questions like:
-   - Are you shopping for yourself or as a gift?
-   - What's your favorite color?
-   - What kind of scents do you like? (floral, woody, citrus, etc.)
-
+1. Answer a few questions (who it's for, favorite color, what scents you like)
 2. The AI looks through my real Shopify products
+3. You get personalized perfume recommendations with pictures and prices
 
-3. It shows you perfumes that match your answers with pictures and prices
+## What I used
 
-## What I used to build this
+- Django (Python)
+- Shopify API (for real product data)
+- HTML/CSS/JavaScript (for the quiz)
+- Render (to host it online)
 
-- Django (Python web framework)
-- Shopify API (to get real product data)
-- HTML/CSS/JavaScript (for the quiz look and feel)
-- Render (to put it online)
+## Features
 
-## How to run it on your computer
-
-1. Clone this repo
-2. Install stuff: `pip install -r requirements.txt`
-3. Run it: `python manage.py runserver`
-4. Go to `http://127.0.0.1:8000` in your browser
-
-## The cool features
-
-- Saves your answers if you accidentally refresh
 - Works on phones and computers
-- Has a little help button if you get stuck
-- Shows real products from my actual store (not fake examples)
-
-## What I learned
-
-- How to connect a Django app to Shopify
-- How to deploy something online so anyone can use it
-- Making a quiz that changes questions based on your answers
+- Saves your answers if you refresh
+- Shows real products from my store
 
 ## Links
 
-- My perfume store: https://perfume.fit
-- Live AI demo: https://perfumefit.onrender.com
+- My store: https://perfume.fit
+- Live demo: https://perfumefit.onrender.com
+- My GitHub: https://github.com/erij7th/PerfumeFit
 
 ---
 
-Made by me for perfume.fit ✨
+Built for perfume.fit ✨
