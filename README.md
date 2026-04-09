@@ -1,43 +1,57 @@
 # Perfume Fit AI Recommender
 
-A simple Django app that recommends real products from the public Shopify catalog at `https://perfume.fit` and returns JSON responses that always include the Perfume Fit storefront link.
+## What is this?
 
-## Quick start
+I made a quiz that helps people find perfumes they'll like on my store (perfume.fit). It asks a few questions and then suggests actual products from my shop.
 
-1. Create a virtual environment and install dependencies:
-   - `python -m venv .venv`
-   - `.venv\Scripts\activate`
-   - `pip install -r requirements.txt`
-2. Run migrations:
-   - `python manage.py migrate`
-3. Start the server:
-   - `python manage.py runserver`
+## Try it out
 
-## Endpoints
+- **Live demo:** https://perfumefit.onrender.com
+- **My store:** https://perfume.fit
 
-- `GET /` renders a simple demo UI.
-- `GET /api/recommend/` accepts query string filters.
-- `POST /api/recommend/` accepts JSON like:
+## How it works
 
-```json
-{
-  "prompt": "I want something clean for the office",
-  "notes": "bergamot, musk",
-  "avoid_notes": "oud",
-  "mood": "fresh",
-  "occasion": "office",
-  "season": "spring"
-}
-```
+1. You answer questions like:
+   - Are you shopping for yourself or as a gift?
+   - What's your favorite color?
+   - What kind of scents do you like? (floral, woody, citrus, etc.)
 
-Example response fields:
+2. The AI looks through my real Shopify products
 
-- `store_url`: `https://perfume.fit`
-- `profile`: interpreted shopper preferences plus catalog source and catalog size
-- `recommendations`: top three matches with score, confidence, explanation, `product_url`, and `shop_url`
+3. It shows you perfumes that match your answers with pictures and prices
 
-## Notes
+## What I used to build this
 
-- The recommender fetches live public Shopify products from `https://perfume.fit/products.json`.
-- Product data is cached in memory for 30 minutes to keep the API responsive.
-- Non-perfume items like deodorants and body care are filtered out before ranking.
+- Django (Python web framework)
+- Shopify API (to get real product data)
+- HTML/CSS/JavaScript (for the quiz look and feel)
+- Render (to put it online)
+
+## How to run it on your computer
+
+1. Clone this repo
+2. Install stuff: `pip install -r requirements.txt`
+3. Run it: `python manage.py runserver`
+4. Go to `http://127.0.0.1:8000` in your browser
+
+## The cool features
+
+- Saves your answers if you accidentally refresh
+- Works on phones and computers
+- Has a little help button if you get stuck
+- Shows real products from my actual store (not fake examples)
+
+## What I learned
+
+- How to connect a Django app to Shopify
+- How to deploy something online so anyone can use it
+- Making a quiz that changes questions based on your answers
+
+## Links
+
+- My perfume store: https://perfume.fit
+- Live AI demo: https://perfumefit.onrender.com
+
+---
+
+Made by me for perfume.fit ✨
